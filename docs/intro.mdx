@@ -1,0 +1,29 @@
+---
+sidebar_position: 1
+slug: /intro
+---
+
+# Introduction
+
+Project Continuum is an open-source, browser-native visual workflow platform — inspired by [KNIME](https://www.knime.com/), built for the cloud. You design workflows as a drag-and-drop graph of nodes, and the platform runs them durably: a crashed worker, a dead Kafka broker, or a dropped connection doesn't lose your progress.
+
+Apache 2.0 licensed. No desktop install — the entire IDE runs in your browser.
+
+## Why Continuum
+
+- **Browser-native canvas** — a full IDE experience (Eclipse Theia + React Flow) with zero install.
+- **Crash-proof execution** — powered by [Temporal](https://temporal.io), workflows survive process crashes, network failures, and restarts. Every step retries automatically.
+- **Real-time streaming** — watch workflows execute step-by-step. Kafka streams events to your browser via MQTT over WebSockets. No polling, no refresh.
+- **Columnar data passing** — nodes exchange Apache Parquet tables, not JSON blobs. Fast, compressed, query-ready.
+- **Extensible by design** — add capabilities by deploying new worker services, not by modifying existing ones. Zero downtime, zero coupling.
+
+## How it fits together
+
+A workflow is a directed graph of nodes. Each node runs as a Temporal activity dispatched to whichever feature worker registered it — base analytics, cheminformatics, AI/ML, or your own custom worker. See [Architecture Overview](./architecture/overview.md) for the full execution path.
+
+## Where to go next
+
+- [Getting Started](./getting-started/local-setup.md) — run the whole platform locally with one `docker compose up`.
+- [Architecture](./architecture/overview.md) — how a workflow actually executes, end to end.
+- [Feature Nodes](./feature-nodes/base-analytics.md) — what you can build with today.
+- [Deployment](./deployment/helm-charts.md) — running Continuum on Kubernetes.

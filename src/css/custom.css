@@ -1,0 +1,30 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Project Continuum brand colors — matches continuum-website's accent purple. */
+:root {
+  --ifm-color-primary: #705697;
+  --ifm-color-primary-dark: #624b86;
+  --ifm-color-primary-darker: #574177;
+  --ifm-color-primary-darkest: #4a3665;
+  --ifm-color-primary-light: #7f66a3;
+  --ifm-color-primary-lighter: #8f77af;
+  --ifm-color-primary-lightest: #a894c4;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #c4a8ff;
+  --ifm-color-primary-dark: #b495f0;
+  --ifm-color-primary-darker: #a384e0;
+  --ifm-color-primary-darkest: #8f6fcf;
+  --ifm-color-primary-light: #d4bbff;
+  --ifm-color-primary-lighter: #ddcbff;
+  --ifm-color-primary-lightest: #ecdfff;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
