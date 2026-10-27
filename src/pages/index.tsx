@@ -290,7 +290,7 @@ function Hero() {
             <span className={styles.brandName}>Project Continuum</span>
           </div>
           <Heading as="h1" className={styles.heroTitle}>
-            Visual workflows that <span className={styles.gradientText}>never lose progress</span>
+            Visual Workflows That <span className={styles.gradientText}>Never Die</span>
           </Heading>
           <p className={styles.heroSubtitle}>{siteConfig.tagline} Inspired by KNIME, built for the cloud.</p>
           <div className={styles.heroButtons}>
