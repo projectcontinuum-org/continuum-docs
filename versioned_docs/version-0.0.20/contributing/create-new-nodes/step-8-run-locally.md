@@ -6,6 +6,11 @@ title: "Step 8: Run the worker against the local stack"
 
 # Step 8: Run the worker against the local stack
 
+<Badges>
+  <Badge color="purple">Step 8 of 9</Badge>
+  <Badge color="green">89% through the guide</Badge>
+</Badges>
+
 1. Start the platform with the [Local Setup](../../getting-started/local-setup.md) compose file and wait until every service is healthy.
 2. Start your worker:
 

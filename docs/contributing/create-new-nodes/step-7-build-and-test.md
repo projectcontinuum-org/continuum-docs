@@ -6,6 +6,11 @@ title: "Step 7: Build and test"
 
 # Step 7: Build and test
 
+<Badges>
+  <Badge color="purple">Step 7 of 9</Badge>
+  <Badge color="green">78% through the guide</Badge>
+</Badges>
+
 ```bash
 ./gradlew build
 ```

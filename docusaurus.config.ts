@@ -33,6 +33,33 @@ const config: Config = {
     locales: ['en'],
   },
 
+  markdown: {
+    mermaid: true,
+  },
+  themes: [
+    '@docusaurus/theme-mermaid',
+    [
+      // Offline full-text search: the index is built with the site, no external service.
+      // Each docs version gets its own index; results follow the version being read.
+      '@easyops-cn/docusaurus-search-local',
+      {
+        hashed: true,
+        indexDocs: true,
+        indexBlog: false,
+        indexPages: true,
+        docsRouteBasePath: '/docs',
+        highlightSearchTermsOnTargetPage: true,
+        explicitSearchResultPath: true,
+        searchResultLimits: 10,
+        searchResultContextMaxLength: 60,
+        searchBarShortcutHint: true,
+        searchBarPosition: 'right',
+        // The breadcrumbs and version badge would otherwise pollute every result snippet.
+        ignoreCssSelectors: ['.theme-doc-breadcrumbs', '.theme-doc-version-badge', '.theme-doc-version-banner'],
+      },
+    ],
+  ],
+
   presets: [
     [
       'classic',
@@ -132,6 +159,11 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      additionalLanguages: ['kotlin', 'bash', 'yaml', 'json'],
+    },
+    // Diagrams colour their nodes with translucent classDefs so they read in both modes.
+    mermaid: {
+      theme: {light: 'default', dark: 'dark'},
     },
   } satisfies Preset.ThemeConfig,
 };

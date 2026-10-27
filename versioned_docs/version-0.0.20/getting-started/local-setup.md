@@ -1,39 +1,55 @@
 ---
+sidebar_label: "🐳 Local Setup"
 sidebar_position: 1
 ---
 
 # Local Setup
 
+<Lead>
+
 The [`continuum-local-setup`](https://github.com/projectcontinuum-org/continuum-local-setup) repo gives you a single `docker compose up` that launches the **complete** Project Continuum stack — infrastructure services, platform backend, browser IDE, and feature workers — all wired together and ready to go.
+
+</Lead>
+
+<Badges>
+  <Badge color="blue">🐳 Docker only</Badge>
+  <Badge color="pink">No builds</Badge>
+</Badges>
 
 No builds. No cloning five repos. Just Docker.
 
 ## Prerequisites
 
-| Requirement | Minimum |
-|-------------|---------|
-| Docker | 20.10+ |
-| Docker Compose | v2.0+ |
-| RAM | 8 GB available for containers |
-| Disk | ~5 GB for images + volumes |
+<CardGrid cols={4}>
+  <Card icon="🐳" title="Docker" color="blue">20.10+</Card>
+  <Card icon="🧩" title="Docker Compose" color="cyan">v2.0+</Card>
+  <Card icon="🧠" title="RAM" color="purple">8 GB available for containers</Card>
+  <Card icon="💾" title="Disk" color="amber">~5 GB for images + volumes</Card>
+</CardGrid>
 
 ## Quick start
 
-```bash
-git clone https://github.com/projectcontinuum-org/continuum-local-setup.git
-cd continuum-local-setup/docker
-docker compose up -d
-```
+<Steps>
 
-Wait for all containers to become healthy, then open the [Continuum Workbench](http://127.0.0.1:3002/#/home/node/example-workflows). Example workflows are pre-loaded under `/home/node/example-workflows/`.
+1. Clone the repo and start the stack:
 
-Verify everything is running:
+   ```bash
+   git clone https://github.com/projectcontinuum-org/continuum-local-setup.git
+   cd continuum-local-setup/docker
+   docker compose up -d
+   ```
 
-```bash
-docker compose ps
-```
+2. Verify everything is running:
 
-All services should show `running` (the `temporal-search-attributes-init` container exits after setup — that's expected).
+   ```bash
+   docker compose ps
+   ```
+
+   All services should show `running` (the `temporal-search-attributes-init` container exits after setup — that's expected).
+
+3. Open the [Continuum Workbench](http://127.0.0.1:3002/#/home/node/example-workflows). Example workflows are pre-loaded under `/home/node/example-workflows/`.
+
+</Steps>
 
 Stop everything:
 
@@ -45,6 +61,35 @@ docker compose down -v    # also remove volumes
 ## What's inside
 
 The compose stack has three layers: infrastructure, platform services, and feature workers.
+
+```mermaid
+flowchart LR
+  subgraph Workers["🧩 Feature workers"]
+    FB["continuum-feature-base"]
+    FC["continuum-feature-cheminformatics"]
+  end
+  subgraph Platform["🌐 Platform services"]
+    WB["continuum-workbench"]
+    API["continuum-api-server"]
+    MB["continuum-message-bridge"]
+  end
+  subgraph Infra["🏗️ Infrastructure"]
+    PG[("PostgreSQL")]
+    T["Temporal"]
+    K["Kafka + Schema Registry"]
+    MQ["Mosquitto"]
+    S3[("MinIO")]
+  end
+  Workers --> Platform --> Infra
+  Workers --> Infra
+
+  classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  classDef core fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef store fill:#10b98133,stroke:#10b981,stroke-width:2px
+  class FB,FC worker
+  class WB,API,MB core
+  class PG,T,K,MQ,S3 store
+```
 
 ### Infrastructure services
 
@@ -80,21 +125,37 @@ Want AI nodes? Add the `continuum-feature-ai` worker image to the compose file f
 
 The `docker/example-workflows/` directory is mounted into the workbench container:
 
-| Workflow | What it demonstrates |
-|----------|---------------------|
-| `SensorDataPipeline.cwf` | IoT sensor data → anomaly detection → conditional routing → batch alerts via REST |
-| `AnomalyDetector.cwf` | Z-score anomaly detection with conditional splitting |
-| `RESTNode.cwf` | Making HTTP requests to external APIs from a workflow |
-| `Unsloth.cwf` | LLM fine-tuning configuration (requires the AI worker) |
+<CardGrid cols={2}>
+  <Card icon="📡" title="SensorDataPipeline.cwf" color="cyan">
+    IoT sensor data → anomaly detection → conditional routing → batch alerts via REST
+  </Card>
+  <Card icon="📈" title="AnomalyDetector.cwf" color="pink">
+    Z-score anomaly detection with conditional splitting
+  </Card>
+  <Card icon="🌐" title="RESTNode.cwf" color="blue">
+    Making HTTP requests to external APIs from a workflow
+  </Card>
+  <Card icon="🤖" title="Unsloth.cwf" color="amber">
+    LLM fine-tuning configuration (requires the AI worker)
+  </Card>
+</CardGrid>
 
 ## Troubleshooting
 
-**Containers keep restarting?** Check logs: `docker compose logs <service-name> --tail 100`
+:::warning[Containers keep restarting?]
+Check logs: `docker compose logs <service-name> --tail 100`
+:::
 
-**Temporal not starting?** PostgreSQL needs to be healthy first — give it 30–60 seconds on first run.
+:::info[Temporal not starting?]
+PostgreSQL needs to be healthy first — give it 30–60 seconds on first run.
+:::
 
-**Workbench shows connection errors?** The API server may still be starting. Wait until `docker compose ps` shows all services as `running`.
+:::info[Workbench shows connection errors?]
+The API server may still be starting. Wait until `docker compose ps` shows all services as `running`.
+:::
 
-**Out of memory?** Kafka + Temporal + all services need ~6–8 GB. Increase Docker's memory limit in Docker Desktop settings.
+:::danger[Out of memory?]
+Kafka + Temporal + all services need ~6–8 GB. Increase Docker's memory limit in Docker Desktop settings.
+:::
 
 See the full [continuum-local-setup README](https://github.com/projectcontinuum-org/continuum-local-setup) for more detail.

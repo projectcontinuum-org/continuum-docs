@@ -6,6 +6,11 @@ title: "Step 1: Create the root project"
 
 # Step 1: Create the root project
 
+<Badges>
+  <Badge color="purple">Step 1 of 9</Badge>
+  <Badge color="green">11% through the guide</Badge>
+</Badges>
+
 Create the folder and add a Gradle wrapper. If Gradle is installed, run `gradle wrapper --gradle-version 8.14`. Otherwise, copy `gradlew`, `gradlew.bat` and `gradle/wrapper/` from an existing feature repo such as `continuum-feature-base`.
 
 **`gradle.properties`**

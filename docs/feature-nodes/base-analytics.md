@@ -1,10 +1,17 @@
 ---
+sidebar_label: "📊 Base Analytics"
 sidebar_position: 1
 ---
 
 # Base Analytics Nodes
 
 [`continuum-feature-base`](https://github.com/projectcontinuum-org/continuum-feature-base) ships 16 production-ready nodes for data transformation, filtering, aggregation, REST integration, scripting, and anomaly detection.
+
+<Badges>
+  <Badge color="purple">16 nodes</Badge>
+  <Badge color="cyan">Kotlin / Spring Boot</Badge>
+  <Badge color="green">Data · Transform · Filter · REST · Scripting</Badge>
+</Badges>
 
 | Category | Node | Description |
 |----------|------|-------------|

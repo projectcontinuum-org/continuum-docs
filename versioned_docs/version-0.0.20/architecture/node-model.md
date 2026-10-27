@@ -1,4 +1,5 @@
 ---
+sidebar_label: "🧩 Node Model & Registration"
 sidebar_position: 2
 ---
 
@@ -10,12 +11,16 @@ Every workflow node is defined inside a **feature worker** — an independent se
 
 Every node:
 
+<Steps>
+
 1. Is annotated `@ContinuumNode` (not just `@Component`) — enforced at build time by a Gradle validation task and at startup by the node activity handler.
 2. Extends `ProcessNodeModel` (data nodes) or `TriggerNodeModel` (source nodes).
 3. Overrides `inputPorts`, `outputPorts`, and `metadata` (as `ContinuumWorkflowModel.NodeData`).
 4. Implements `execute()` — the simple overload for most nodes, or the `ExecutionContext` overload for nodes that need credentials.
 
-```kotlin
+</Steps>
+
+```kotlin title="MyNodeModel.kt"
 @ContinuumNode
 class MyNodeModel : ProcessNodeModel() {
     override val inputPorts = mapOf("input" to ContinuumWorkflowModel.NodePort(...))
@@ -38,19 +43,33 @@ Node documentation is auto-loaded from `resources/<package>/<ClassName>.doc.md` 
 
 At startup, each worker publishes its available nodes to Kafka so the platform can build a central registry of "which node lives on which worker":
 
+```mermaid
+flowchart LR
+  W["🧩 Worker (startup)<br/>discovers all @ContinuumNode<br/>beans via Spring"]
+  K["📨 Kafka topic<br/>FeatureRegistration<br/>(Avro binary)"]
+  B["🔁 Message Bridge<br/>consumes &amp; upserts<br/>per node"]
+  DB[("🐘 PostgreSQL<br/>registered_nodes<br/>nodeId + taskQueue")]
+
+  W -->|publish| K --> B -->|upsert| DB
+
+  classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  classDef stream fill:#f59e0b33,stroke:#f59e0b,stroke-width:2px
+  classDef core fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef store fill:#10b98133,stroke:#10b981,stroke-width:2px
+  class W worker
+  class K stream
+  class B core
+  class DB store
 ```
-┌──────────────────────┐      Avro binary       ┌──────────────────────┐       PostgreSQL
-│  Worker (startup)    │ ──── Kafka topic ─────► │  Message Bridge      │ ────► registered_nodes
-│  Discovers all       │  FeatureRegistration    │  Consumes & upserts  │       (nodeId + taskQueue)
-│  @ContinuumNode      │                         │  per node            │
-│  beans via Spring    │                         │                      │
-└──────────────────────┘                         └──────────────────────┘
-```
+
+<Steps>
 
 1. On `ApplicationReadyEvent`, the worker iterates every `ContinuumNodeModel` bean it has.
 2. For each node, it builds a `FeatureRegistrationRequest` — containing `nodeId` (fully-qualified class name), `workerId`, `featureId`, `taskQueue`, a JSON `nodeManifest` (ports, schemas, title, icon), and the node's documentation markdown — and publishes it to Kafka (Avro, keyed by `nodeId`).
 3. `continuum-message-bridge` consumes the message and performs an atomic upsert into the `registered_nodes` table.
 4. The orchestration service's `InitializeActivity` later queries this registry (via the API server) to resolve which task queue should run each node in a workflow.
+
+</Steps>
 
 `featureId` is derived by stripping the trailing `.node` package segment from the class name, e.g. `org.projectcontinuum.feature.analytics.node.CreateTableNodeModel` → `org.projectcontinuum.feature.analytics`.
 
@@ -63,4 +82,6 @@ Nodes that need external secrets (API keys, DB passwords) don't receive them aut
 - The node's `propertiesUISchema` declares a control with `options.format = "credential"` purely so `continuum-workbench` renders a credential picker in its config dialog — the backend doesn't read this schema.
 - Inside `execute()`, the node reads its own `properties` to find the configured credential name, then calls `executionContext.getCredential<T>(name)`. This fetches the credential on demand from `continuum-credentials-server` (`GET /api/v1/credentials/{name}`) and deserializes it into `T`, throwing if not found.
 
+:::info[Credentials are never stored in the workflow]
 Credentials are fetched lazily, per execution — never bundled into the workflow definition or passed through Kafka.
+:::

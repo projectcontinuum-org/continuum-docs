@@ -1,10 +1,17 @@
 ---
+sidebar_label: "⎈ Helm Charts"
 sidebar_position: 1
 ---
 
 # Helm Charts
 
 [`continuum-charts`](https://github.com/projectcontinuum-org/continuum-charts) publishes three Helm charts for deploying Continuum on Kubernetes, served as a standard Helm chart repository via GitHub Pages.
+
+<Badges>
+  <Badge color="blue">Kubernetes</Badge>
+  <Badge color="purple">3 charts</Badge>
+  <Badge color="green">GitHub Pages Helm repo</Badge>
+</Badges>
 
 | Chart | Description | Required |
 |-------|-------------|----------|

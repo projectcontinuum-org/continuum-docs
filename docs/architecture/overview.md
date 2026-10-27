@@ -1,4 +1,5 @@
 ---
+sidebar_label: "🗺️ System Overview"
 sidebar_position: 1
 ---
 
@@ -6,38 +7,49 @@ sidebar_position: 1
 
 Continuum is split into a browser frontend, a core backend (API server + Temporal orchestration), and independent feature workers that provide the actual workflow nodes.
 
-```
-┌─────────────────────────────────────────────────────┐
-│              BROWSER  (Continuum Workbench)           │
-│   Eclipse Theia IDE + React Flow drag-and-drop       │
-└──────────────┬────────────────────┬─────────────────┘
-               │ REST               │ MQTT / WebSocket
-               ▼                    ▼
-      ┌────────────────┐   ┌──────────────────┐
-      │  API Server    │   │  Message Bridge   │
-      │                │   │  Kafka → MQTT     │
-      └───────┬────────┘   └────────▲─────────┘
-              │                     │
-              ▼                     │
-      ┌──────────────┐    ┌────────┴────────┐
-      │   Temporal    │    │     Kafka       │
-      │ orchestration │    │                 │
-      └───────┬───────┘    └────────▲────────┘
-              │  dispatches          │  events
-              ▼                     │
-      ┌──────────────────────────────┐
-      │      FEATURE WORKERS          │
-      │  Base · Cheminformatics · AI  │
-      └──────────────┬───────────────┘
-                     │ read / write
-                     ▼
-            ┌─────────────────┐
-            │  MinIO (S3)     │
-            │  Parquet files  │
-            └─────────────────┘
+```mermaid
+flowchart TB
+  subgraph Browser["🖥️ Browser — Continuum Workbench"]
+    UI["Eclipse Theia IDE + React Flow canvas"]
+  end
+
+  API["🌐 API Server"]
+  Bridge["🔁 Message Bridge<br/>Kafka → MQTT"]
+  Temporal["⏱️ Temporal<br/>orchestration"]
+  Kafka["📨 Kafka"]
+
+  subgraph Workers["🧩 Feature Workers"]
+    direction LR
+    Base["📊 Base"]
+    Chem["🧪 Cheminformatics"]
+    AI["🤖 AI / ML"]
+  end
+
+  MinIO[("🗄️ MinIO (S3)<br/>Parquet files")]
+
+  UI -->|REST| API
+  Bridge -->|MQTT / WebSocket| UI
+  API --> Temporal
+  Temporal -->|dispatches| Workers
+  Workers -->|events| Kafka
+  Kafka --> Bridge
+  Workers <-->|read / write| MinIO
+
+  classDef ui fill:#8b5cf633,stroke:#8b5cf6,stroke-width:2px
+  classDef core fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef stream fill:#f59e0b33,stroke:#f59e0b,stroke-width:2px
+  classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  classDef store fill:#10b98133,stroke:#10b981,stroke-width:2px
+  class UI ui
+  class API,Temporal core
+  class Kafka,Bridge stream
+  class Base,Chem,AI worker
+  class MinIO store
 ```
 
 ## Execution flow
+
+<Steps>
 
 1. You design a workflow in the browser (React Flow canvas) and hit **Execute**.
 2. `continuum-api-server` receives the REST call and starts a Temporal workflow (`ContinuumWorkflow`, on `WORKFLOW_TASK_QUEUE`).
@@ -48,9 +60,40 @@ Continuum is split into a browser frontend, a core backend (API server + Tempora
 7. `continuum-message-bridge` consumes the Kafka event and republishes it to Mosquitto (MQTT).
 8. The browser receives the update over MQTT-over-WebSocket and lights up the corresponding node in real time.
 
+</Steps>
+
+The same flow as a sequence:
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant B as 🖥️ Browser
+  participant A as 🌐 API Server
+  participant T as ⏱️ Temporal
+  participant W as 🧩 Worker
+  participant S as 🗄️ MinIO
+  participant K as 📨 Kafka → MQTT
+
+  B->>A: Execute workflow (REST)
+  A->>T: Start ContinuumWorkflow
+  T->>A: InitializeActivity: resolve task queues
+  loop each unblocked DAG node
+    T->>W: IContinuumNodeActivity.run()
+    W->>S: Read input Parquet
+    W->>S: Write output Parquet
+    W-->>T: Progress signals
+    T-->>K: WorkflowUpdateEvent
+    K-->>B: Node status (MQTT over WebSocket)
+  end
+```
+
 ## Why this survives crashes
 
-Temporal persists workflow state (in PostgreSQL) at every step. If a worker process dies mid-execution, the orchestration service simply redispatches the pending activity once a worker becomes available again — no data loss, no restart from scratch. This is the "crash-proof execution" promise: a failed Kafka broker, a restarted worker pod, or a dropped network connection doesn't lose workflow progress.
+:::tip[Crash-proof by design]
+Temporal persists workflow state (in PostgreSQL) at every step. If a worker process dies mid-execution, the orchestration service simply redispatches the pending activity once a worker becomes available again — no data loss, no restart from scratch.
+:::
+
+This is the "crash-proof execution" promise: a failed Kafka broker, a restarted worker pod, or a dropped network connection doesn't lose workflow progress.
 
 ## Task queues
 

@@ -9,9 +9,15 @@ slug: /contributing/create-new-nodes
 
 This guide walks you through building a **feature worker** with your own workflow node, from an empty folder to a passing build and a worker that registers its node with the platform. The running example is a **Word Counter** node that counts the words in a text column and appends the count as a new column.
 
+<Badges>
+  <Badge color="cyan">Kotlin + Gradle</Badge>
+  <Badge color="green">9 steps</Badge>
+  <Badge color="amber">Platform 0.0.20</Badge>
+</Badges>
+
 You need to know some Kotlin and Gradle. You don't need to know Temporal, Kafka or Spring internals; the Continuum Gradle plugins and the worker starter handle those.
 
-:::info Versions used in this guide
+:::info[Versions used in this guide]
 Verified against **Continuum platform `0.0.20`** (Spring Boot 4.0.6, Kotlin 2.2, Jackson 3, Gradle 8.14, JDK 21). Check [Maven Central](https://central.sonatype.com/artifact/org.projectcontinuum.core/continuum-commons) for the latest platform version, and use the same version everywhere in your project.
 :::
 
@@ -45,6 +51,8 @@ You **don't** need a GitHub token. All Continuum artifacts and Gradle plugins ar
 
 ## The steps
 
+<Steps>
+
 1. [Create the root project](./step-1-root-project.md)
 2. [Create the feature module](./step-2-feature-module.md)
 3. [Write the node](./step-3-write-the-node.md)
@@ -54,5 +62,7 @@ You **don't** need a GitHub token. All Continuum artifacts and Gradle plugins ar
 7. [Build and test](./step-7-build-and-test.md)
 8. [Run the worker against the local stack](./step-8-run-locally.md)
 9. [Ship it](./step-9-ship-it.md)
+
+</Steps>
 
 If something goes wrong along the way, see [Troubleshooting](./troubleshooting.md).

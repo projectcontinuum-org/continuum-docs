@@ -1,10 +1,17 @@
 ---
+sidebar_label: "🧪 Cheminformatics"
 sidebar_position: 3
 ---
 
 # Cheminformatics Nodes
 
 [`continuum-feature-cheminformatics`](https://github.com/projectcontinuum-org/continuum-feature-cheminformatics) ships 38 production-grade cheminformatics nodes across 10 categories, powered by [RDKit](https://www.rdkit.org/). Built for computational chemistry, medicinal chemistry, and drug discovery teams who need scalable, reproducible molecular processing pipelines — parse, standardize, fingerprint, filter, react, and visualize molecules at scale.
+
+<Badges>
+  <Badge color="green">38 nodes</Badge>
+  <Badge color="pink">10 categories</Badge>
+  <Badge color="blue">Powered by RDKit</Badge>
+</Badges>
 
 ## Node categories
 
