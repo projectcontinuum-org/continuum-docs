@@ -40,6 +40,15 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl: 'https://github.com/projectcontinuum-org/continuum-docs/tree/main/',
+          // Docs are versioned by Continuum platform version (see versions.json).
+          // The newest entry in versions.json is served at /docs/; docs/ (unreleased) at /docs/next/.
+          versions: {
+            current: {
+              label: 'Next (unreleased)',
+              path: 'next',
+              banner: 'unreleased',
+            },
+          },
         },
         blog: false,
         theme: {
@@ -66,6 +75,17 @@ const config: Config = {
           sidebarId: 'docsSidebar',
           position: 'left',
           label: 'Docs',
+        },
+        {
+          type: 'docsVersionDropdown',
+          position: 'right',
+          dropdownItemsAfter: [
+            {type: 'html', value: '<hr class="dropdown-separator">'},
+            {
+              href: 'https://github.com/projectcontinuum-org/continuum-platform-core/releases',
+              label: 'Platform releases',
+            },
+          ],
         },
         {
           href: 'https://projectcontinuum.org',
