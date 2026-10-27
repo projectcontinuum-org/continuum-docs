@@ -6,6 +6,11 @@ title: "Step 3: Write the node"
 
 # Step 3: Write the node
 
+<Badges>
+  <Badge color="purple">Step 3 of 9</Badge>
+  <Badge color="green">33% through the guide</Badge>
+</Badges>
+
 Put node classes in a `.node` subpackage. The platform derives your **feature ID** by removing the trailing `.node` segment from the class name. For example, `org.projectcontinuum.feature.demo.node.WordCounterNodeModel` gets the feature ID `org.projectcontinuum.feature.demo`.
 
 **`src/main/kotlin/org/projectcontinuum/feature/demo/node/WordCounterNodeModel.kt`**

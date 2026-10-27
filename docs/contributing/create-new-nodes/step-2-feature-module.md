@@ -6,6 +6,11 @@ title: "Step 2: Create the feature module"
 
 # Step 2: Create the feature module
 
+<Badges>
+  <Badge color="purple">Step 2 of 9</Badge>
+  <Badge color="green">22% through the guide</Badge>
+</Badges>
+
 **`features/continuum-feature-demo/build.gradle.kts`**
 
 ```kotlin
@@ -22,7 +27,7 @@ continuum {
 }
 ```
 
-:::warning Always set `continuumVersion`
+:::warning[Always set `continuumVersion`]
 If you leave out the `continuum { }` block, the plugin falls back to a built-in default version that is older than the plugin itself. Read the value from `gradle.properties` so plugins and libraries always match.
 :::
 

@@ -1,10 +1,17 @@
 ---
+sidebar_label: "🤖 AI / ML"
 sidebar_position: 2
 ---
 
 # AI / ML Nodes
 
 [`continuum-feature-ai`](https://github.com/projectcontinuum-org/continuum-feature-ai) provides nodes for training and fine-tuning LLMs directly inside workflow graphs. Ships as a Spring Boot worker with an auto-managed Python virtual environment for ML execution.
+
+<Badges>
+  <Badge color="amber">LLM fine-tuning</Badge>
+  <Badge color="pink">Unsloth + LoRA</Badge>
+  <Badge color="blue">Managed Python venv</Badge>
+</Badges>
 
 ## LLM Trainer (Unsloth)
 

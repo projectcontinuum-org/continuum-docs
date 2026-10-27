@@ -1,0 +1,10 @@
+{
+  "label": "🏗️ Architecture",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "How a workflow actually executes, end to end.",
+    "title": "Architecture",
+    "slug": "/category/architecture"
+  }
+}

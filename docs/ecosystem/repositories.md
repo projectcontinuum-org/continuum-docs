@@ -1,4 +1,5 @@
 ---
+sidebar_label: "📚 Repositories"
 sidebar_position: 1
 slug: /ecosystem
 ---
@@ -6,6 +7,12 @@ slug: /ecosystem
 # Repositories
 
 Project Continuum is split across several focused repositories under the [`projectcontinuum-org`](https://github.com/projectcontinuum-org) GitHub organization — not a monorepo. Each one can be built and released independently.
+
+<Badges>
+  <Badge color="purple">Multi-repo</Badge>
+  <Badge color="green">Independently released</Badge>
+  <Badge color="cyan">Apache 2.0</Badge>
+</Badges>
 
 | Repository | Description |
 |-----------|-------------|
