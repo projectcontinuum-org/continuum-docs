@@ -1,29 +1,85 @@
 ---
 sidebar_position: 1
 slug: /intro
+sidebar_label: 👋 Introduction
 ---
 
 # Introduction
 
+<Lead>
+
 Project Continuum is an open-source, browser-native visual workflow platform — inspired by [KNIME](https://www.knime.com/), built for the cloud. You design workflows as a drag-and-drop graph of nodes, and the platform runs them durably: a crashed worker, a dead Kafka broker, or a dropped connection doesn't lose your progress.
 
-Apache 2.0 licensed. No desktop install — the entire IDE runs in your browser.
+</Lead>
+
+<Badges>
+  <Badge color="green">Apache 2.0</Badge>
+  <Badge color="purple">Browser-native IDE</Badge>
+  <Badge color="cyan">Powered by Temporal</Badge>
+  <Badge color="amber">Parquet data passing</Badge>
+</Badges>
+
+No desktop install — the entire IDE runs in your browser.
 
 ## Why Continuum
 
-- **Browser-native canvas** — a full IDE experience (Eclipse Theia + React Flow) with zero install.
-- **Crash-proof execution** — powered by [Temporal](https://temporal.io), workflows survive process crashes, network failures, and restarts. Every step retries automatically.
-- **Real-time streaming** — watch workflows execute step-by-step. Kafka streams events to your browser via MQTT over WebSockets. No polling, no refresh.
-- **Columnar data passing** — nodes exchange Apache Parquet tables, not JSON blobs. Fast, compressed, query-ready.
-- **Extensible by design** — add capabilities by deploying new worker services, not by modifying existing ones. Zero downtime, zero coupling.
+<CardGrid cols={3}>
+  <Card icon="🖥️" title="Browser-native canvas" color="purple">
+    A full IDE experience (Eclipse Theia + React Flow) with zero install.
+  </Card>
+  <Card icon="🛡️" title="Crash-proof execution" color="pink">
+    Powered by [Temporal](https://temporal.io), workflows survive process crashes, network failures, and restarts. Every step retries automatically.
+  </Card>
+  <Card icon="⚡" title="Real-time streaming" color="amber">
+    Watch workflows execute step-by-step. Kafka streams events to your browser via MQTT over WebSockets. No polling, no refresh.
+  </Card>
+  <Card icon="🧱" title="Columnar data passing" color="green">
+    Nodes exchange Apache Parquet tables, not JSON blobs. Fast, compressed, query-ready.
+  </Card>
+  <Card icon="🧩" title="Extensible by design" color="cyan">
+    Add capabilities by deploying new worker services, not by modifying existing ones. Zero downtime, zero coupling.
+  </Card>
+  <Card icon="🔓" title="Open source" color="blue">
+    Apache 2.0 licensed, from the workbench to the workers.
+  </Card>
+</CardGrid>
 
 ## How it fits together
 
-A workflow is a directed graph of nodes. Each node runs as a Temporal activity dispatched to whichever feature worker registered it — base analytics, cheminformatics, AI/ML, or your own custom worker. See [Architecture Overview](./architecture/overview.md) for the full execution path.
+A workflow is a directed graph of nodes. Each node runs as a Temporal activity dispatched to whichever feature worker registered it — base analytics, cheminformatics, AI/ML, or your own custom worker.
+
+```mermaid
+flowchart LR
+  UI["🖥️ Workbench<br/>(browser)"] -->|Execute| API["API Server"]
+  API --> T["⏱️ Temporal"]
+  T -->|dispatch node| W1["📊 Base Analytics"]
+  T -->|dispatch node| W2["🧪 Cheminformatics"]
+  T -->|dispatch node| W3["🤖 AI / ML"]
+  T -->|dispatch node| W4["🧩 Your worker"]
+
+  classDef ui fill:#8b5cf633,stroke:#8b5cf6,stroke-width:2px
+  classDef core fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  class UI ui
+  class API,T core
+  class W1,W2,W3,W4 worker
+```
+
+See [Architecture Overview](./architecture/overview.md) for the full execution path.
 
 ## Where to go next
 
-- [Getting Started](./getting-started/local-setup.md) — run the whole platform locally with one `docker compose up`.
-- [Architecture](./architecture/overview.md) — how a workflow actually executes, end to end.
-- [Feature Nodes](./feature-nodes/base-analytics.md) — what you can build with today.
-- [Deployment](./deployment/helm-charts.md) — running Continuum on Kubernetes.
+<CardGrid cols={2}>
+  <Card icon="🚀" title="Getting Started" color="purple" doc="getting-started/local-setup">
+    Run the whole platform locally with one `docker compose up`.
+  </Card>
+  <Card icon="🏗️" title="Architecture" color="pink" doc="architecture/overview">
+    How a workflow actually executes, end to end.
+  </Card>
+  <Card icon="🧰" title="Feature Nodes" color="green" doc="feature-nodes/base-analytics">
+    What you can build with today.
+  </Card>
+  <Card icon="☸️" title="Deployment" color="cyan" doc="deployment/helm-charts">
+    Running Continuum on Kubernetes.
+  </Card>
+</CardGrid>

@@ -1,8 +1,10 @@
 {
-  "label": "Feature Nodes",
+  "label": "🧰 Feature Nodes",
   "position": 6,
   "link": {
     "type": "generated-index",
-    "description": "What you can build with today — nodes shipped by each feature worker."
+    "description": "What you can build with today — nodes shipped by each feature worker.",
+    "title": "Feature Nodes",
+    "slug": "/category/feature-nodes"
   }
 }

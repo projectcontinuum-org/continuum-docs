@@ -6,6 +6,11 @@ title: "Step 5: Write unit tests"
 
 # Step 5: Write unit tests
 
+<Badges>
+  <Badge color="purple">Step 5 of 9</Badge>
+  <Badge color="green">56% through the guide</Badge>
+</Badges>
+
 `execute()` only depends on its arguments, so you can test it with Mockito mocks and no Spring context:
 
 **`src/test/kotlin/org/projectcontinuum/feature/demo/node/WordCounterNodeModelTest.kt`**

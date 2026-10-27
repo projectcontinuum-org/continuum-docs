@@ -1,4 +1,5 @@
 ---
+sidebar_label: "🧱 Scaffolding a Worker"
 sidebar_position: 1
 slug: /contributing
 ---

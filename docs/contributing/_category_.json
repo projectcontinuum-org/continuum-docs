@@ -1,8 +1,10 @@
 {
-  "label": "Contributing",
+  "label": "🤝 Contributing",
   "position": 7,
   "link": {
     "type": "generated-index",
-    "description": "Add your own workflow nodes to Project Continuum."
+    "description": "Add your own workflow nodes to Project Continuum.",
+    "title": "Contributing",
+    "slug": "/category/contributing"
   }
 }

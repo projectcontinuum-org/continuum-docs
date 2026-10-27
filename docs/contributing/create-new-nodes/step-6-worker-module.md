@@ -6,6 +6,11 @@ title: "Step 6: Create the worker module"
 
 # Step 6: Create the worker module
 
+<Badges>
+  <Badge color="purple">Step 6 of 9</Badge>
+  <Badge color="green">67% through the guide</Badge>
+</Badges>
+
 **`worker/build.gradle.kts`**
 
 ```kotlin
@@ -74,7 +79,7 @@ logging:
     org.projectcontinuum.feature.demo: debug
 ```
 
-:::danger Give every worker a unique task queue
+:::danger[Give every worker a unique task queue]
 If `node-task-queue` isn't set, a worker listens on the shared default queue `ACTIVITY_TASK_QUEUE`. When two workers share a queue, Temporal can send a node to a worker that doesn't have it, and the node fails. Every shipped worker sets its own queue (for example `CONTINUUM_FEATURE_BASE_TASK_QUEUE`), and yours must too. The worker sends its queue name in its registration message, so the orchestrator knows where to route your nodes.
 :::
 

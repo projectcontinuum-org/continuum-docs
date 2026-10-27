@@ -6,6 +6,11 @@ title: "Step 4: Add node documentation"
 
 # Step 4: Add node documentation
 
+<Badges>
+  <Badge color="purple">Step 4 of 9</Badge>
+  <Badge color="green">44% through the guide</Badge>
+</Badges>
+
 Each node has a Markdown help page that the workbench shows next to it. It's loaded from the classpath on startup, at a path that matches the node's package and class name exactly:
 
 ```text

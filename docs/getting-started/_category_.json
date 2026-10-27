@@ -1,8 +1,10 @@
 {
-  "label": "Getting Started",
+  "label": "🚀 Getting Started",
   "position": 2,
   "link": {
     "type": "generated-index",
-    "description": "Run the entire Continuum platform locally with one command."
+    "description": "Run the entire Continuum platform locally with one command.",
+    "title": "Getting Started",
+    "slug": "/category/getting-started"
   }
 }
