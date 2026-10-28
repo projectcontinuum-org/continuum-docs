@@ -68,3 +68,7 @@ Pushing to `main` triggers [`.github/workflows/deploy.yml`](.github/workflows/de
 ## Related repositories
 
 See [Ecosystem](docs/ecosystem/repositories.md) for the full list of Project Continuum repositories.
+
+## License
+
+[Apache 2.0](LICENSE)
