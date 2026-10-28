@@ -24,7 +24,7 @@ Feature workers (`continuum-feature-base`, `continuum-feature-cheminformatics`, 
 ## Add the repository
 
 ```bash
-helm repo add continuum https://projectcontinuum.github.io/continuum-charts
+helm repo add continuum https://projectcontinuum-org.github.io/continuum-charts
 helm repo update
 helm search repo continuum
 ```
