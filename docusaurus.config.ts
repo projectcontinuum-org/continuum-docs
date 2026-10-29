@@ -159,7 +159,7 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
-      additionalLanguages: ['kotlin', 'bash', 'yaml', 'json'],
+      additionalLanguages: ['kotlin', 'java', 'bash', 'yaml', 'json', 'properties'],
     },
     // Diagrams colour their nodes with translucent classDefs so they read in both modes.
     mermaid: {

@@ -39,13 +39,22 @@ Make sure the local stack from Step 1 is still up (`docker compose ps` in `docke
 
 ## 3. Check the node was loaded
 
-Ask the worker which nodes it serves:
+The worker logs every node it found when it starts. Look for these two lines in the `bootRun` output:
+
+```text
+Registered process nodes: [com.acme.demo.node.WordCounterNodeModel]
+Registered trigger nodes: []
+```
+
+Your node's full class name should be in the list. You can also ask the worker over HTTP:
 
 ```bash
 curl http://localhost:8090/api/v1/node-repo
 ```
 
-Your **Word Counter** should be in the response. If it isn't, the build passed but the worker didn't find your node. Follow the [checklist in Troubleshooting](./troubleshooting.md#my-node-doesnt-show-up-in-the-workbench). It covers the four usual causes: the module isn't listed in `worker/build.gradle.kts`, the `.imports` file names the wrong class, `@ComponentScan` doesn't cover your package, or the class is missing `@ContinuumNode`.
+Your **Word Counter** should be in the response.
+
+If it isn't, the build passed but the worker didn't find your node. Work through the [checklist in Troubleshooting](./troubleshooting.md#my-node-doesnt-show-up-in-the-workbench). Most often, one of these is wrong: the module isn't listed in `worker/build.gradle.kts`, the `.imports` file names the wrong class or `@ComponentScan` doesn't cover your package. (A missing `@ContinuumNode` is rarely the cause, because the build catches it.)
 
 ## 4. Run it in the Workbench
 

@@ -15,7 +15,7 @@ The template has about 40 files, but you will only write code in a handful of th
 
 ## The big picture
 
-Your repository builds **one worker**. The worker is a small Spring Boot app that loads one or more **feature modules**. A feature module is a Gradle library that contains your node classes.
+Your repository builds **one worker**. The worker is a small Spring Boot app that loads one or more **feature modules**. A feature module is a Gradle library that contains your node classes. The template ships two example modules, one in Kotlin and one in Java. You keep the one you write in and delete the other in [Step 3](./step-3-make-it-yours.md).
 
 ```mermaid
 flowchart LR
@@ -56,7 +56,7 @@ continuum-feature-template/
 │           │   └── …/node/HelloWorldNodeModel.doc.md            Write   ← help page
 │           └── test/kotlin/…/HelloWorldNodeModelTest.kt         Write   ← unit test
 │
-├── features/continuum-feature-hello-java/   Delete if you only write Kotlin (same layout)
+├── features/continuum-feature-hello-java/   Rename once   same layout in Java; delete whichever example you don't need
 │
 ├── worker/
 │   ├── build.gradle.kts               Keep in sync  which modules the worker loads, image name
@@ -66,14 +66,15 @@ continuum-feature-template/
 │
 ├── charts/continuum-feature-template/ Keep in sync  Helm chart for Kubernetes
 ├── docker/                            Leave alone   local Continuum stack
-└── .github/workflows/                 Keep in sync  CI and release (lists your modules)
+├── .github/workflows/                 Keep in sync  CI and release (lists your modules)
+└── README.md, CONTRIBUTING.md, AGENTS.md   Rename once   still describe the template
 ```
 
 ## The files that matter
 
 ### Files you write
 
-These three live side by side in each feature module and share a name:
+These three live side by side in each feature module and share a name. The Java module has the same layout, with `HelloJavaNodeModel` and `.java` files:
 
 | File | What it is |
 |------|------------|
@@ -90,7 +91,7 @@ If you get one of the first three wrong, the build still passes but **the worker
 | `AutoConfigure.kt` | A small `@Configuration` + `@ComponentScan` class. It makes Spring scan your package for nodes. Your node classes must live in this package or below. If `basePackages` doesn't cover your node's package, the node isn't found. |
 | `META-INF/spring/…AutoConfiguration.imports` | One line naming the `AutoConfigure` class. Spring Boot reads this file to find your module. If the file is missing or names the wrong class, Spring doesn't load your module. |
 | `worker/build.gradle.kts` | Its `implementation(project(...))` lines decide which feature modules the worker loads. A module that isn't listed here is never loaded. |
-| `node/` package name | Node classes must be in a package ending in `.node`. The platform derives your **feature ID** by removing that last segment. |
+| `node/` package name | Node classes belong in a package ending in `.node`. The platform derives your **feature ID** by removing that last segment. (Other package names still load; the feature ID is then the whole package.) |
 
 If a node doesn't appear after [Step 5](./step-5-test-and-run.md), follow the [checklist in Troubleshooting](./troubleshooting.md#my-node-doesnt-show-up-in-the-workbench).
 
@@ -112,7 +113,7 @@ If a node doesn't appear after [Step 5](./step-5-test-and-run.md), follow the [c
 
 ## What the Gradle plugins do for you
 
-You don't declare Spring, Temporal, Jackson or test dependencies. The two Continuum plugins add them:
+You don't declare Spring, Temporal, Jackson or test dependencies. The three Continuum plugins add them:
 
 | Plugin | Used in | Gives you |
 |--------|---------|-----------|
@@ -120,10 +121,6 @@ You don't declare Spring, Temporal, Jackson or test dependencies. The two Contin
 | `org.projectcontinuum.feature-java` | Java feature modules | The same, for Java. |
 | `org.projectcontinuum.worker` | `worker/` | Spring Boot, the worker starter (Temporal polling and node registration), `bootRun`, and Jib for the container image. |
 
-Add a `dependencies { }` block to a feature module only when your node needs an extra library.
-
-:::info[Versions]
-The template builds against Continuum platform `0.0.20` (Spring Boot 4.0.6, Kotlin 2.2, Jackson 3, Gradle 8.14, JDK 21). Everything comes from Maven Central, so you don't need a GitHub token.
-:::
+Add a `dependencies { }` block to a feature module only when your node needs an extra library; see [Add a library](./recipes.md#add-a-library). The plugin versions are the `continuumPlatformVersion` in `gradle.properties` (see the [version note in the overview](./overview.md#what-you-need)).
 
 Next: [rename the template](./step-3-make-it-yours.md).

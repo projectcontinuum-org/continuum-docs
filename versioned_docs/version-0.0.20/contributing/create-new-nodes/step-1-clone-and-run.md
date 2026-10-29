@@ -47,7 +47,11 @@ From the repository root:
 ./gradlew :worker:bootRun
 ```
 
-The worker connects to Temporal, registers its nodes with the platform and serves on port `8090`.
+The worker connects to Temporal, registers its nodes with the platform and serves on port `8090`. Wait for these lines in its output:
+
+```text
+Registered process nodes: [org.projectcontinuum.feature.example.node.HelloWorldNodeModel, org.projectcontinuum.feature.example.java.node.HelloJavaNodeModel]
+```
 
 ## 5. See your nodes in the Workbench
 
