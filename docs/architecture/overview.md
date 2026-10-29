@@ -9,37 +9,38 @@ Continuum is split into a browser frontend, a core backend (API server + Tempora
 
 ```mermaid
 flowchart TB
-  subgraph Browser["🖥️ Browser — Continuum Workbench"]
-    UI["Eclipse Theia IDE + React Flow canvas"]
+  subgraph Browser["🖥️ Browser: Continuum Workbench"]
+    UI(["🎨 Eclipse Theia IDE + React Flow canvas"])
   end
 
-  API["🌐 API Server"]
-  Bridge["🔁 Message Bridge<br/>Kafka → MQTT"]
-  Temporal["⏱️ Temporal<br/>orchestration"]
-  Kafka["📨 Kafka"]
+  API["🌐 <b>API Server</b>"]
+  Temporal{{"⏱️ <b>Temporal</b><br/>orchestration"}}
+  Bridge["🔁 <b>Message Bridge</b><br/>Kafka → MQTT"]
+  Kafka[["📨 <b>Kafka</b><br/>events"]]
 
-  subgraph Workers["🧩 Feature Workers"]
+  subgraph Workers["🧩 Feature Workers: add yours here"]
     direction LR
     Base["📊 Base"]
     Chem["🧪 Cheminformatics"]
     AI["🤖 AI / ML"]
   end
 
-  MinIO[("🗄️ MinIO (S3)<br/>Parquet files")]
+  MinIO[("🗄️ <b>MinIO (S3)</b><br/>Parquet files")]
 
-  UI -->|REST| API
-  Bridge -->|MQTT / WebSocket| UI
-  API --> Temporal
-  Temporal -->|dispatches| Workers
-  Workers -->|events| Kafka
-  Kafka --> Bridge
-  Workers <-->|read / write| MinIO
+  UI ==>|"REST"| API
+  Bridge -.->|"MQTT / WebSocket<br/>live status"| UI
+  API ==> Temporal
+  Temporal ==>|"dispatches"| Workers
+  Workers -.->|"events"| Kafka
+  Kafka -.-> Bridge
+  Workers <-->|"read / write"| MinIO
 
   classDef ui fill:#8b5cf633,stroke:#8b5cf6,stroke-width:2px
   classDef core fill:#ec489933,stroke:#ec4899,stroke-width:2px
   classDef stream fill:#f59e0b33,stroke:#f59e0b,stroke-width:2px
   classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
   classDef store fill:#10b98133,stroke:#10b981,stroke-width:2px
+  classDef hero fill:#06b6d433,stroke:#06b6d4,stroke-width:4px,stroke-dasharray:6 3
   class UI ui
   class API,Temporal core
   class Kafka,Bridge stream
@@ -74,17 +75,29 @@ sequenceDiagram
   participant S as 🗄️ MinIO
   participant K as 📨 Kafka → MQTT
 
-  B->>A: Execute workflow (REST)
-  A->>T: Start ContinuumWorkflow
-  T->>A: InitializeActivity: resolve task queues
-  loop each unblocked DAG node
-    T->>W: IContinuumNodeActivity.run()
-    W->>S: Read input Parquet
-    W->>S: Write output Parquet
-    W-->>T: Progress signals
-    T-->>K: WorkflowUpdateEvent
-    K-->>B: Node status (MQTT over WebSocket)
+  rect rgba(139, 92, 246, 0.10)
+    Note over B,T: 🚀 Start
+    B->>+A: Execute workflow (REST)
+    A->>+T: Start ContinuumWorkflow
+    T->>A: InitializeActivity: resolve task queues
+    deactivate A
   end
+
+  loop 🔁 each unblocked DAG node
+    rect rgba(6, 182, 212, 0.10)
+      Note over T,S: ⚙️ Run the node
+      T->>+W: IContinuumNodeActivity.run()
+      W->>S: Read input Parquet
+      W->>S: Write output Parquet
+      W-->>-T: Progress signals
+    end
+    rect rgba(245, 158, 11, 0.12)
+      Note over T,B: 📡 Live status
+      T-->>K: WorkflowUpdateEvent
+      K-->>B: Node status (MQTT over WebSocket)
+    end
+  end
+  deactivate T
 ```
 
 ## Why this survives crashes

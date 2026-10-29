@@ -64,31 +64,37 @@ The compose stack has three layers: infrastructure, platform services, and featu
 
 ```mermaid
 flowchart LR
-  subgraph Workers["🧩 Feature workers"]
-    FB["continuum-feature-base"]
-    FC["continuum-feature-cheminformatics"]
+  subgraph Workers["🧩 Feature workers: yours join here"]
+    FB["📊 continuum-feature-base"]
+    FC["🧪 continuum-feature-cheminformatics"]
   end
   subgraph Platform["🌐 Platform services"]
-    WB["continuum-workbench"]
+    WB(["🖥️ continuum-workbench"])
     API["continuum-api-server"]
-    MB["continuum-message-bridge"]
+    MB["🔁 continuum-message-bridge"]
   end
   subgraph Infra["🏗️ Infrastructure"]
-    PG[("PostgreSQL")]
-    T["Temporal"]
-    K["Kafka + Schema Registry"]
-    MQ["Mosquitto"]
-    S3[("MinIO")]
+    PG[("🐘 PostgreSQL")]
+    T{{"⏱️ Temporal"}}
+    K[["📨 Kafka + Schema Registry"]]
+    MQ[["📡 Mosquitto"]]
+    S3[("🗄️ MinIO")]
   end
-  Workers --> Platform --> Infra
-  Workers --> Infra
+  Workers ==> Platform ==> Infra
+  Workers -.-> Infra
 
-  classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  classDef ui fill:#8b5cf633,stroke:#8b5cf6,stroke-width:2px
   classDef core fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef stream fill:#f59e0b33,stroke:#f59e0b,stroke-width:2px
+  classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
   classDef store fill:#10b98133,stroke:#10b981,stroke-width:2px
+  classDef hero fill:#06b6d433,stroke:#06b6d4,stroke-width:4px,stroke-dasharray:6 3
   class FB,FC worker
-  class WB,API,MB core
-  class PG,T,K,MQ,S3 store
+  class WB ui
+  class API,MB core
+  class PG,S3 store
+  class T core
+  class K,MQ stream
 ```
 
 ### Infrastructure services

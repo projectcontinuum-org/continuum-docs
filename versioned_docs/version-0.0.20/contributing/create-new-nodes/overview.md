@@ -7,62 +7,77 @@ slug: /contributing/create-new-nodes
 
 # Create New Nodes
 
-This guide walks you through building a **feature worker** with your own workflow node, from an empty folder to a passing build and a worker that registers its node with the platform. The running example is a **Word Counter** node that counts the words in a text column and appends the count as a new column.
+<Lead>
+
+Start from the **`continuum-feature-template`** repository, rename it, replace its example node with yours, and ship a worker. You write one Kotlin or Java class per node. The template provides everything else.
+
+</Lead>
 
 <Badges>
-  <Badge color="cyan">Kotlin + Gradle</Badge>
-  <Badge color="green">9 steps</Badge>
+  <Badge color="cyan">Kotlin or Java</Badge>
+  <Badge color="green">6 steps</Badge>
   <Badge color="amber">Platform 0.0.20</Badge>
 </Badges>
 
-You need to know some Kotlin and Gradle. You don't need to know Temporal, Kafka or Spring internals; the Continuum Gradle plugins and the worker starter handle those.
+## The idea in one minute
 
-:::info[Versions used in this guide]
-Verified against **Continuum platform `0.0.20`** (Spring Boot 4.0.6, Kotlin 2.2, Jackson 3, Gradle 8.14, JDK 21). Check [Maven Central](https://central.sonatype.com/artifact/org.projectcontinuum.core/continuum-commons) for the latest platform version, and use the same version everywhere in your project.
-:::
+A **node** is a block on the Workbench canvas that reads tables, does something and writes tables. Nodes live in a **feature worker**, a small Spring Boot app that registers its nodes with the platform at startup.
 
-## How the pieces fit
+You don't build a worker from scratch. The template is already a complete, working worker with two example nodes (one Kotlin, one Java), a build, tests, CI/CD, a Helm chart and a local stack. Your job is to rename it and swap in your own nodes.
 
-A feature worker is a small Gradle multi-project:
+```mermaid
+flowchart TB
+  S1(["🧲 <b>1 · Clone and run</b><br/>see it work first"]) --> S2(["🔭 <b>2 · Tour</b><br/>what to touch"])
+  S2 --> S3(["🏷️ <b>3 · Rename</b><br/>make it yours"])
+  S3 --> S4(["✍️ <b>4 · Write</b><br/>class, help, test"])
+  S4 --> S5(["🧪 <b>5 · Test and run</b><br/>see it in the Workbench"])
+  S5 --> S6(["🚢 <b>6 · Ship</b><br/>release and Helm"])
+  S6 ==> Done(["🎉 <b>Your nodes are live</b>"])
 
+  classDef setup fill:#8b5cf633,stroke:#8b5cf6,stroke-width:2px
+  classDef build fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  classDef ship fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef done fill:#10b98133,stroke:#10b981,stroke-width:3px
+  class S1,S2 setup
+  class S3,S4 build
+  class S5,S6 ship
+  class Done done
+  linkStyle 5 stroke:#10b981,stroke-width:4px
 ```
-continuum-feature-demo/
-├── settings.gradle.kts           # plugin versions + module list
-├── gradle.properties             # continuumPlatformVersion, featureVersion
-├── features/
-│   └── continuum-feature-demo/   # library module: your node classes
-└── worker/                       # thin Spring Boot app that hosts the nodes
-```
 
-- **Feature modules** (`org.projectcontinuum.feature` plugin) hold the node classes. They're plain libraries and can be published and reused.
-- **The worker module** (`org.projectcontinuum.worker` plugin) is a Spring Boot app with no node logic of its own. It depends on your feature modules and on `continuum-worker-springboot-starter`. At startup the starter finds every `@ContinuumNode` bean, polls a Temporal task queue for node executions, and publishes one registration message per node to Kafka.
-
-See [Node Model & Feature Registration](../../architecture/node-model.md) for what happens after registration.
-
-## Prerequisites
+## What you need
 
 | Requirement | Notes |
 |-------------|-------|
-| JDK 21 | Eclipse Temurin recommended. The plugins set a Java 21 toolchain. |
-| Gradle wrapper 8.14+ | Older wrappers (for example 8.4) can't load the Spring Boot 4 Gradle plugin. |
-| Docker | Only needed to run the worker against the [local stack](../../getting-started/local-setup.md). |
+| JDK 21 | Eclipse Temurin recommended. Check with `java -version`. |
+| Docker and Compose | Runs the local Continuum stack, about 8 GB of RAM. |
+| Some Kotlin or Java | You don't need to know Temporal, Kafka or Spring internals. |
+| A GitHub account | The template is used from GitHub, and the release steps run on GitHub Actions. |
 
-You **don't** need a GitHub token. All Continuum artifacts and Gradle plugins are published to **Maven Central**.
+You don't need a GitHub token, and you don't need to install Gradle: the repository includes the wrapper. Everything comes from Maven Central. To publish your work you also need Docker Hub (or another registry) credentials, and optionally a Maven Central account; [Step 6](./step-6-ship-it.md) covers both.
 
 ## The steps
 
 <Steps>
 
-1. [Create the root project](./step-1-root-project.md)
-2. [Create the feature module](./step-2-feature-module.md)
-3. [Write the node](./step-3-write-the-node.md)
-4. [Add node documentation](./step-4-node-documentation.md)
-5. [Write unit tests](./step-5-unit-tests.md)
-6. [Create the worker module](./step-6-worker-module.md)
-7. [Build and test](./step-7-build-and-test.md)
-8. [Run the worker against the local stack](./step-8-run-locally.md)
-9. [Ship it](./step-9-ship-it.md)
+1. [Clone the template and run it](./step-1-clone-and-run.md): see the example nodes working before you change anything.
+2. [Tour the template](./step-2-tour-the-template.md): which files you write, which you rename and which you leave alone.
+3. [Make it yours](./step-3-make-it-yours.md): a checklist for renaming the project, packages, worker and chart.
+4. [Write your node](./step-4-write-your-node.md): the node class (Kotlin and Java), its help page and its unit test.
+5. [Test and run your node](./step-5-test-and-run.md): build, run the worker and use your node in the Workbench.
+6. [Ship it](./step-6-ship-it.md): versions, CI, release and Kubernetes.
 
 </Steps>
 
-If something goes wrong along the way, see [Troubleshooting](./troubleshooting.md).
+After the six steps, [More node recipes](./recipes.md) covers adding more nodes, source nodes, credentials, retries, extra libraries, logging and debugging.
+
+## Where to look when something breaks
+
+- Your node doesn't appear in the Workbench: [Troubleshooting](./troubleshooting.md).
+- The platform's side of registration: [Node Model & Feature Registration](../../architecture/node-model.md).
+- A full list of errors and fixes, from the build to Kubernetes: [Troubleshooting](./troubleshooting.md).
+- The template's own README and `AGENTS.md` list its commands and rules.
+
+:::info[Versions]
+Verified against **Continuum platform `0.0.20`** (Spring Boot 4.0.6, Kotlin 2.2, Jackson 3, Gradle 8.14, JDK 21). Check [Maven Central](https://central.sonatype.com/artifact/org.projectcontinuum.core/continuum-commons) for newer versions.
+:::

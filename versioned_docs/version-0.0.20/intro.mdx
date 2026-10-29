@@ -50,19 +50,24 @@ A workflow is a directed graph of nodes. Each node runs as a Temporal activity d
 
 ```mermaid
 flowchart LR
-  UI["🖥️ Workbench<br/>(browser)"] -->|Execute| API["API Server"]
-  API --> T["⏱️ Temporal"]
-  T -->|dispatch node| W1["📊 Base Analytics"]
-  T -->|dispatch node| W2["🧪 Cheminformatics"]
-  T -->|dispatch node| W3["🤖 AI / ML"]
-  T -->|dispatch node| W4["🧩 Your worker"]
+  UI(["🖥️ <b>Workbench</b><br/>draw a workflow<br/>in your browser"]) ==>|"▶ Execute"| API["🌐 <b>API Server</b>"]
+  API ==> T{{"⏱️ <b>Temporal</b><br/>durable orchestration<br/><i>survives crashes</i>"}}
+  T -->|"dispatch node"| W1["📊 Base Analytics"]
+  T -->|"dispatch node"| W2["🧪 Cheminformatics"]
+  T -->|"dispatch node"| W3["🤖 AI / ML"]
+  T -.->|"dispatch node"| W4["🧩 <b>Your worker</b><br/>+ your nodes"]
 
   classDef ui fill:#8b5cf633,stroke:#8b5cf6,stroke-width:2px
   classDef core fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef stream fill:#f59e0b33,stroke:#f59e0b,stroke-width:2px
   classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  classDef store fill:#10b98133,stroke:#10b981,stroke-width:2px
+  classDef hero fill:#06b6d433,stroke:#06b6d4,stroke-width:4px,stroke-dasharray:6 3
   class UI ui
   class API,T core
-  class W1,W2,W3,W4 worker
+  class W1,W2,W3 worker
+  class W4 hero
+  linkStyle 1 stroke:#ec4899,stroke-width:4px
 ```
 
 See [Architecture Overview](./architecture/overview.md) for the full execution path.
