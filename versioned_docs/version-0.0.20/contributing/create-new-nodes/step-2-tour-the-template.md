@@ -19,9 +19,30 @@ Your repository builds **one worker**. The worker is a small Spring Boot app tha
 
 ```mermaid
 flowchart LR
-    W["<b>worker/</b><br/>The app you run and deploy.<br/>No node logic."]
-    W -->|loads| K["<b>features/continuum-feature-hello</b><br/>Nodes in Kotlin"]
-    W -->|loads| J["<b>features/continuum-feature-hello-java</b><br/>Nodes in Java"]
+  subgraph Repo["📦 Your repository"]
+    W["🚀 <b>worker/</b><br/>Spring Boot app you run and deploy<br/><i>no node logic</i>"]
+    K["🟣 <b>features/continuum-feature-hello</b><br/>nodes in Kotlin"]
+    J["☕ <b>features/continuum-feature-hello-java</b><br/>nodes in Java"]
+    W -->|loads| K
+    W -->|loads| J
+  end
+
+  API["🌐 <b>API Server</b><br/>platform"]
+  WB["🖥️ <b>Workbench</b><br/>node palette"]
+  T["⏱️ <b>Temporal</b><br/>your task queue"]
+
+  W ==>|"① announces every @ContinuumNode"| API
+  API -->|"② nodes appear"| WB
+  T ==>|"③ sends work to"| W
+
+  classDef code fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  classDef entry fill:#8b5cf633,stroke:#8b5cf6,stroke-width:3px
+  classDef core fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef ui fill:#f59e0b33,stroke:#f59e0b,stroke-width:2px
+  class K,J code
+  class W entry
+  class API,T core
+  class WB ui
 ```
 
 At startup the worker finds every class annotated with `@ContinuumNode`, listens on its own Temporal task queue for work, and announces each node to the platform so it shows up in the Workbench palette.

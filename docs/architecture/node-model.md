@@ -45,21 +45,25 @@ At startup, each worker publishes its available nodes to Kafka so the platform c
 
 ```mermaid
 flowchart LR
-  W["🧩 Worker (startup)<br/>discovers all @ContinuumNode<br/>beans via Spring"]
-  K["📨 Kafka topic<br/>FeatureRegistration<br/>(Avro binary)"]
-  B["🔁 Message Bridge<br/>consumes &amp; upserts<br/>per node"]
-  DB[("🐘 PostgreSQL<br/>registered_nodes<br/>nodeId + taskQueue")]
+  W[/"🧩 <b>Worker starts</b><br/>finds every @ContinuumNode<br/>bean via Spring"/]
+  K[["📨 <b>Kafka topic</b><br/>FeatureRegistration<br/><i>Avro binary</i>"]]
+  B["🔁 <b>Message Bridge</b><br/>consumes and upserts<br/>one row per node"]
+  DB[("🐘 <b>PostgreSQL</b><br/>registered_nodes<br/>nodeId + taskQueue")]
+  UI(["🖥️ <b>Workbench palette</b><br/>your node appears"])
 
-  W -->|publish| K --> B -->|upsert| DB
+  W ==>|"publish"| K ==> B ==>|"upsert"| DB -.->|"served via API"| UI
 
-  classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
-  classDef stream fill:#f59e0b33,stroke:#f59e0b,stroke-width:2px
+  classDef ui fill:#8b5cf633,stroke:#8b5cf6,stroke-width:2px
   classDef core fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef stream fill:#f59e0b33,stroke:#f59e0b,stroke-width:2px
+  classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
   classDef store fill:#10b98133,stroke:#10b981,stroke-width:2px
+  classDef hero fill:#06b6d433,stroke:#06b6d4,stroke-width:4px,stroke-dasharray:6 3
   class W worker
   class K stream
   class B core
   class DB store
+  class UI ui
 ```
 
 <Steps>

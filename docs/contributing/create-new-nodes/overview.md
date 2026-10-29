@@ -26,8 +26,23 @@ A **node** is a block on the Workbench canvas that reads tables, does something 
 You don't build a worker from scratch. The template is already a complete, working worker with two example nodes (one Kotlin, one Java), a build, tests, CI/CD, a Helm chart and a local stack. Your job is to rename it and swap in your own nodes.
 
 ```mermaid
-flowchart LR
-    S1["<b>1</b><br/>Clone and run"] --> S2["<b>2</b><br/>Tour"] --> S3["<b>3</b><br/>Rename"] --> S4["<b>4</b><br/>Write your node"] --> S5["<b>5</b><br/>Test and run"] --> S6["<b>6</b><br/>Ship"]
+flowchart TB
+  S1(["🧲 <b>1 · Clone and run</b><br/>see it work first"]) --> S2(["🔭 <b>2 · Tour</b><br/>what to touch"])
+  S2 --> S3(["🏷️ <b>3 · Rename</b><br/>make it yours"])
+  S3 --> S4(["✍️ <b>4 · Write</b><br/>class, help, test"])
+  S4 --> S5(["🧪 <b>5 · Test and run</b><br/>see it in the Workbench"])
+  S5 --> S6(["🚢 <b>6 · Ship</b><br/>release and Helm"])
+  S6 ==> Done(["🎉 <b>Your nodes are live</b>"])
+
+  classDef setup fill:#8b5cf633,stroke:#8b5cf6,stroke-width:2px
+  classDef build fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  classDef ship fill:#ec489933,stroke:#ec4899,stroke-width:2px
+  classDef done fill:#10b98133,stroke:#10b981,stroke-width:3px
+  class S1,S2 setup
+  class S3,S4 build
+  class S5,S6 ship
+  class Done done
+  linkStyle 5 stroke:#10b981,stroke-width:4px
 ```
 
 ## What you need

@@ -17,17 +17,40 @@ Shipping is mostly already set up in the template. This page explains what each 
 
 ```mermaid
 flowchart TB
-    A["Bump featureVersion in gradle.properties<br/>Update appVersion in Chart.yaml<br/>(must match)"] --> B["Open PR: CI checks run"]
-    B --> C{Pass CI?}
-    C -->|No| D["Fix and push again"]
-    D --> B
-    C -->|Yes| E["Merge to main"]
-    E --> F["Go to GitHub Releases page"]
-    F --> G["Click 'Create a new release'"]
-    G --> H["GitHub release triggers workflows"]
-    H --> I["Feature modules to Maven Central"]
-    H --> J["Worker image to Docker Hub"]
-    H --> K["Helm chart attached to the release<br/>and added to the gh-pages index"]
+  A(["✏️ <b>Bump versions</b><br/>featureVersion in gradle.properties<br/>appVersion in Chart.yaml (must match)"])
+  B["🔀 <b>Open a pull request</b><br/>CI runs build, versions, chart lint"]
+  C{"✅ CI green?"}
+  D["🔧 Fix and push again"]
+  E["🌿 <b>Merge to main</b>"]
+  F(["📣 <b>Publish a GitHub Release</b><br/>Releases → Create a new release"])
+  I[("📚 <b>Maven Central</b><br/>feature libraries")]
+  J[("🐳 <b>Docker Hub</b><br/>worker image")]
+  K[("📦 <b>Helm chart</b><br/>release asset + gh-pages index")]
+  L(["☸️ <b>helm install / upgrade</b><br/>nodes appear in the Workbench"])
+
+  A --> B --> C
+  C -->|"no"| D --> B
+  C -->|"yes"| E --> F
+  F ==>|"on-release.yml"| I
+  F ==>|"on-release.yml"| J
+  F ==>|"release.yml"| K
+  I ~~~ L
+  J ==> L
+  K ==> L
+
+  classDef dev fill:#8b5cf633,stroke:#8b5cf6,stroke-width:2px
+  classDef ci fill:#f59e0b33,stroke:#f59e0b,stroke-width:2px
+  classDef fail fill:#ef444433,stroke:#ef4444,stroke-width:2px
+  classDef release fill:#ec489933,stroke:#ec4899,stroke-width:3px
+  classDef out fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
+  classDef done fill:#10b98133,stroke:#10b981,stroke-width:3px
+  class A,E dev
+  class B,C ci
+  class D fail
+  class F release
+  class I,J,K out
+  class L done
+  linkStyle 2,3 stroke:#ef4444,stroke-width:2px,stroke-dasharray:5 4
 ```
 
 :::warning[Publish a GitHub Release]
