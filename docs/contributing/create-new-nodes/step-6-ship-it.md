@@ -30,10 +30,8 @@ flowchart TB
     H --> K["Helm chart to gh-pages"]
 ```
 
-:::warning[Key Step: Create a GitHub Release]
-After merging to main, you must go to the GitHub UI and create a release. Don't just tag the commit or push a version. **Go to:** Repository → Releases → Create a new release
-
-This triggers the `on-release.yml` and `release.yml` workflows that publish your artifacts.
+:::warning[Publish a GitHub Release]
+After merging to `main`, create a release in the GitHub UI. That is what starts the publishing workflows.
 :::
 
 ## 1. Bump the version
@@ -63,11 +61,11 @@ appVersion: "0.0.2"   # Must match gradle.properties
 | `validate-versions.yml` | PR | Checks the version rules above |
 | `lint-test.yml` | PR touching `charts/` | `ct lint` on the Helm chart |
 | `build-module.yml` | Manual | Build one module, optionally publish it |
-| `on-release.yml` | ⭐ **GitHub release published** | Libraries → Maven Central, worker → Docker Hub |
-| `release.yml` | ⭐ **GitHub release published** | Package the Helm chart and update the `gh-pages` index |
+| `on-release.yml` | GitHub release published | Libraries → Maven Central, worker → Docker Hub |
+| `release.yml` | GitHub release published | Package the Helm chart and update the `gh-pages` index |
 
-:::info[Workflows are triggered by Release, not by Tag or Push]
-The workflows that publish your artifacts (`on-release.yml` and `release.yml`) run when you **publish a GitHub Release**. They don't run on tags or commits. You must explicitly create a release in the GitHub UI.
+:::info[Workflows are triggered by a published release]
+`on-release.yml` and `release.yml` run when you **publish a GitHub Release** (Repository → Releases → Create a new release). Pushing a tag or merging to `main` doesn't trigger them.
 :::
 
 ## 3. Add repository secrets
