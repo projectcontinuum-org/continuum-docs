@@ -45,11 +45,7 @@ Ask the worker which nodes it serves:
 curl http://localhost:8090/api/v1/node-repo
 ```
 
-Your **Word Counter** should be in the response. If it isn't, the worker didn't find your node. The usual causes are, in order:
-
-1. The `.imports` file names the wrong class, or `AutoConfigure`'s `basePackages` doesn't cover your package ([Step 3](./step-3-make-it-yours.md#2-the-feature-module)).
-2. `worker/build.gradle.kts` doesn't list your module.
-3. The class is missing `@ContinuumNode`.
+Your **Word Counter** should be in the response. If it isn't, the build passed but the worker didn't find your node. Follow the [checklist in Troubleshooting](./troubleshooting.md#my-node-doesnt-show-up-in-the-workbench). It covers the four usual causes: the module isn't listed in `worker/build.gradle.kts`, the `.imports` file names the wrong class, `@ComponentScan` doesn't cover your package, or the class is missing `@ContinuumNode`.
 
 ## 4. Run it in the Workbench
 
@@ -57,6 +53,9 @@ Your **Word Counter** should be in the response. If it isn't, the worker didn't 
 2. Add a table source that has a `text` column, such as **Create Table**, and connect it to Word Counter.
 3. Open the Word Counter settings to see the form you defined, then run the workflow.
 4. Click the output port. Every row has a new `word_count` column.
+5. Open the node's help page in the Workbench. It should show your `.doc.md` content. If it reads "Documentation not found", see [Step 4](./step-4-write-your-node.md#2-the-help-page).
+
+Locally you don't need to set any environment variables: the worker's defaults match the local stack. When you deploy elsewhere, see the [worker configuration reference](./step-6-ship-it.md#worker-configuration-reference).
 
 You've now changed the template into your own working worker.
 

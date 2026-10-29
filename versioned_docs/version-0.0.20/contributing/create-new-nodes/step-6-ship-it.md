@@ -17,17 +17,41 @@ Shipping is mostly already set up in the template. This page explains what each 
 
 ```mermaid
 flowchart TB
-    A["Bump featureVersion"] --> B["Open PR: CI checks run"] --> D["Merge to main"] --> E["Publish a GitHub release"]
-    E --> F["Feature modules to Maven Central<br/><i>on-release.yml</i>"]
-    E --> G["Worker image to Docker Hub<br/><i>on-release.yml</i>"]
-    E --> H["Helm chart to gh-pages<br/><i>release.yml</i>"]
+    A["Bump featureVersion in gradle.properties<br/>Update appVersion in Chart.yaml<br/>(must match)"] --> B["Open PR: CI checks run"]
+    B --> C{Pass CI?}
+    C -->|No| D["Fix and push again"]
+    D --> B
+    C -->|Yes| E["Merge to main"]
+    E --> F["Go to GitHub Releases page"]
+    F --> G["Click 'Create a new release'"]
+    G --> H["GitHub release triggers workflows"]
+    H --> I["Feature modules to Maven Central"]
+    H --> J["Worker image to Docker Hub"]
+    H --> K["Helm chart to gh-pages"]
 ```
+
+:::warning[Publish a GitHub Release]
+After merging to `main`, create a release in the GitHub UI. That is what starts the publishing workflows.
+:::
 
 ## 1. Bump the version
 
-Every change under `features/` or `worker/` needs a new `featureVersion` in `gradle.properties`, and the chart's `appVersion` in `charts/<repo>/Chart.yaml` must be set to the same value.
+Every change under `features/` or `worker/` needs:
+1. A new `featureVersion` in `gradle.properties`
+2. The chart's `appVersion` in `charts/<repo>/Chart.yaml` set to the **same value**
 
 CI enforces both on every pull request (`validate-versions.yml`). If your PR fails with "does not match featureVersion" or "featureVersion must be bumped", this is why.
+
+**Example:**
+```properties
+# gradle.properties
+featureVersion=0.0.2
+```
+
+```yaml
+# charts/<repo>/Chart.yaml
+appVersion: "0.0.2"   # Must match gradle.properties
+```
 
 ## 2. What CI runs
 
@@ -37,38 +61,45 @@ CI enforces both on every pull request (`validate-versions.yml`). If your PR fai
 | `validate-versions.yml` | PR | Checks the version rules above |
 | `lint-test.yml` | PR touching `charts/` | `ct lint` on the Helm chart |
 | `build-module.yml` | Manual | Build one module, optionally publish it |
-| `on-release.yml` | GitHub release | Libraries → Maven Central, worker → Docker Hub |
-| `release.yml` | GitHub release | Package the Helm chart and update the `gh-pages` index |
+| `on-release.yml` | GitHub release published | Libraries → Maven Central, worker → Docker Hub |
+| `release.yml` | GitHub release published | Package the Helm chart and update the `gh-pages` index |
+
+:::info[Workflows are triggered by a published release]
+`on-release.yml` and `release.yml` run when you **publish a GitHub Release** (Repository → Releases → Create a new release). Pushing a tag or merging to `main` doesn't trigger them.
+:::
 
 ## 3. Add repository secrets
 
 The release workflows read these from your repository's **Settings → Secrets and variables → Actions**:
 
-| Secret | Used for |
-|--------|----------|
-| `MAVEN_CENTRAL_USERNAME`, `MAVEN_CENTRAL_PASSWORD` | Publishing libraries to Maven Central |
-| `GPG_KEY_ID`, `GPG_PASSPHRASE`, `GPG_SECRET_KEY`, `GPG_PUBLIC_KEY` | Signing the published artifacts |
-| `DOCKER_HUB_USERNAME`, `DOCKER_HUB_PASSWORD` | Pushing the worker image |
+| Secret | Used for | Required? |
+|--------|----------|-----------|
+| `MAVEN_CENTRAL_USERNAME`, `MAVEN_CENTRAL_PASSWORD` | Publishing libraries to Maven Central | If publishing to Maven Central |
+| `GPG_KEY_ID`, `GPG_PASSPHRASE`, `GPG_SECRET_KEY`, `GPG_PUBLIC_KEY` | Signing the published artifacts | If publishing to Maven Central |
+| `DOCKER_HUB_USERNAME`, `DOCKER_HUB_PASSWORD` | Pushing the worker image | Yes, always needed |
 
 :::tip[Not publishing libraries?]
 If your nodes only run in your own worker, you don't need Maven Central or the GPG secrets. In each feature module's `continuum { }` block set `publishToMavenCentral.set(false)`, and set `publish_to_maven: false` for those modules in `on-release.yml`.
+
+You still need Docker Hub secrets to publish the worker image.
 :::
 
-## 4. Deploy to Kubernetes
+## 4. Verify before deployment
 
-The chart installs next to `continuum-infra` and `continuum-platform` in the same namespace:
+Before installing the chart to Kubernetes, verify these critical synchronization points:
+
+- [ ] `taskQueue` in `charts/<repo>/values.yaml` matches `node-task-queue` in `application.yaml`
+- [ ] `taskQueue` is globally unique (search other workers)
+- [ ] `image.repository` in values.yaml matches what your release pushes to Docker Hub
+- [ ] The `continuum.infra.*` and `apiServer` hosts match the release names of other Continuum services
+
+Then install:
 
 ```bash
 helm install <repo> ./charts/<repo> -n continuum
 ```
 
-Check these before you install:
-
-- `taskQueue` in `values.yaml` matches `node-task-queue` in `application.yaml`, and is unique.
-- `image.repository` is the image your release pushes.
-- The `continuum.infra.*` and `apiServer` hosts match the release names you used for `continuum-infra` and `continuum-platform`.
-
-See [Deployment](../../deployment/helm-charts.md) for the full setup.
+See [Deployment](../../deployment/helm-charts.md) for the full Kubernetes setup.
 
 ## Worker configuration reference
 

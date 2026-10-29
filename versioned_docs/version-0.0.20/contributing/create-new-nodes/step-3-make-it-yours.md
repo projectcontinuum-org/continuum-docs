@@ -13,13 +13,13 @@ title: "Step 3: Make it yours"
 
 The template carries its own name in many files. This step replaces it with yours. It's tedious but mechanical, and you only do it once. Work through the checklist in order and commit when the build is green.
 
-The examples below use these placeholders. Pick your values first:
+Pick your values first, and check the other Continuum repositories to make sure the names aren't already in use:
 
-| Placeholder | Example | Used for |
-|-------------|---------|----------|
-| `<repo>` | `continuum-feature-demo` | Repository, Gradle root project, Helm chart and Docker image name |
-| `<package>` | `org.projectcontinuum.feature.demo` | Kotlin/Java package for your nodes |
-| `<TASK_QUEUE>` | `CONTINUUM_FEATURE_DEMO_TASK_QUEUE` | Temporal task queue. **Must be unique.** |
+| Placeholder | Example | Used for | Changing it later |
+|-------------|---------|----------|-------------------|
+| `<repo>` | `continuum-feature-demo` | Repository, Gradle root project, Helm chart and Docker image name | Possible, but you repeat this whole step. |
+| `<package>` | `org.projectcontinuum.feature.demo` | Kotlin/Java package for your nodes | Breaks saved workflows that use your nodes, because the package is part of each node's identity. Don't change it after shipping. |
+| `<TASK_QUEUE>` | `CONTINUUM_FEATURE_DEMO_TASK_QUEUE` | Temporal task queue. **Must be unique across all workers in your Continuum instance.** | Change it in `application.yaml` and the chart together. |
 
 ## Checklist
 
@@ -103,8 +103,18 @@ Then confirm nothing broke:
 
 If you changed the chart, also run `helm lint charts/<repo>`.
 
+### Before you move on
+
+- [ ] The module folder, the `include(...)` line in `settings.gradle.kts` and the `implementation(project(...))` line in `worker/build.gradle.kts` all use the same module name.
+- [ ] The `.imports` file names your real `AutoConfigure` class.
+- [ ] `node-task-queue` in `application.yaml` equals `taskQueue` in the chart's `values.yaml` (if you updated the chart).
+- [ ] `featureVersion` in `gradle.properties` equals `appVersion` in `Chart.yaml` (if you updated the chart).
+- [ ] The leftover grep above prints nothing.
+- [ ] `./gradlew build` passes, and `helm lint charts/<repo>` passes if you changed the chart.
+
 :::info[What you can skip for now]
 You can postpone the Helm chart and the workflow files until you are ready to deploy ([Step 6](./step-6-ship-it.md)). The build, tests and local run only need sections 1 to 4.
 :::
 
 Next: [write your node](./step-4-write-your-node.md).
+

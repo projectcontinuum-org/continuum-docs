@@ -157,12 +157,21 @@ Break one of these and the build fails, the node doesn't load, or workflows brea
 
 | Rule | Why |
 |------|-----|
-| Annotate with `@ContinuumNode`, not `@Component`. | It makes the bean prototype-scoped, so each run gets a fresh instance. The build fails without it. |
+| Annotate with `@ContinuumNode`, not `@Component`. | It makes the bean prototype-scoped, so each run gets a fresh instance. The build fails without it (`validateContinuumNodeAnnotations`). |
 | Extend `ProcessNodeModel` (has inputs) or `TriggerNodeModel` (source node, outputs only). | `TriggerNodeModel.execute()` has no `inputs` parameter. |
 | Set `metadata.id` and `metadata.nodeModel` to `this.javaClass.name`. | The full class name is the node's identity in saved workflows. **Renaming or moving the class later breaks workflows that use it.** |
 | Put the class in a package that ends in `.node`. | The platform removes that last segment to get the feature ID. |
-| Import Jackson from `tools.jackson.*`. | The platform uses Jackson 3. `com.fasterxml.jackson.databind` won't compile. |
+| Import Jackson from `tools.jackson.*`. | The platform uses Jackson 3. `com.fasterxml.jackson.*` (Jackson 2) won't compile. |
 | Take `ObjectMapper` as a constructor parameter. | Spring injects it. In unit tests, pass `jacksonObjectMapper()`. |
+
+### Ports
+
+`inputPorts` and `outputPorts` are maps:
+
+- The **key** (for example `"data"`) is the port ID you use in `execute()` to read or write data.
+- The **value** is a `ContinuumWorkflowModel.NodePort` with a `name` (shown in the Workbench) and a `contentType`.
+
+Table ports use `APPLICATION_OCTET_STREAM_VALUE`, as in the running example. The template's example nodes do the same.
 
 ### Settings and validation
 
@@ -176,7 +185,7 @@ Break one of these and the build fails, the node doesn't load, or workflows brea
 - `createOutputPortWriter("data")` returns a writer. `write(rowNumber, row)` takes a `Long` row number that **starts at 0**.
 - Wrap both in `.use { }`. The output file is only complete once the writer is closed.
 
-Cell values must be one of these types, and never `null`. Anything else makes `write()` throw `IllegalArgumentException: Unsupported type`. Convert other types first (for example `toString()` on a `LocalDate`), and leave a key out instead of storing `null`.
+Cell values must be one of these types, and never `null`. Anything else makes `write()` throw `IllegalArgumentException: Unsupported type`. Leave a key out instead of storing `null`.
 
 | Kotlin type | Stored as |
 |-------------|-----------|
@@ -187,9 +196,16 @@ Cell values must be one of these types, and never `null`. Anything else makes `w
 | `List<*>`, `Map<*, *>` | `application/json` |
 | SVG `org.w3c.dom.Document` | `image/svg+xml` |
 
+Convert anything else first. For example, call `toString()` on a `LocalDate`, and convert a `BigDecimal` to a `Double` or a `String`.
+
 ### Errors, retries and progress
 
-Every node runs as a Temporal activity, so an exception thrown from `execute()` is **retried** by default. Throw `NodeRuntimeException(isRetriable = false, ...)` for errors a retry can't fix, such as missing settings or an unconnected port. Empty strings are fine for `workflowId` and `nodeId`.
+Every node runs as a Temporal activity, so an exception thrown from `execute()` is **retried** by default (with exponential backoff). Throw `NodeRuntimeException(isRetriable = false, ...)` for errors a retry can't fix, such as:
+- Missing or invalid settings (user error)
+- An unconnected input port
+- Invalid input data that can't be recovered from
+
+Empty strings are fine for `workflowId` and `nodeId` in the exception.
 
 Call `nodeProgressCallback.report(percent)` (0 to 100) as you go. The Workbench shows it as live progress on the node.
 
@@ -197,13 +213,15 @@ Call `nodeProgressCallback.report(percent)` (0 to 100) as you go. The Workbench 
 
 Rename `HelloWorldNodeModel.doc.md` to `WordCounterNodeModel.doc.md` and rewrite it. The Workbench shows this file next to the node.
 
-The path must match the node's package and class name exactly:
+The path must match the node's package and class name exactly. For the class `org.projectcontinuum.feature.demo.node.WordCounterNodeModel`, the file is:
 
 ```text
 src/main/resources/org/projectcontinuum/feature/demo/node/WordCounterNodeModel.doc.md
 ```
 
-If the file is missing or misplaced, the node still works, but its help page reads *"Documentation not found for WordCounterNodeModel"*.
+To build the path, take the class's full name, replace each `.` with `/` and add `.doc.md`. The `node` folder is part of the package, not an extra segment.
+
+If the file is missing or misplaced, the node still works, but its help page reads *"Documentation not found for WordCounterNodeModel"*, and the build doesn't warn you.
 
 A good help page has four parts, as in the template's Hello World page: what the node does, a **Configuration** table, a **Ports** table, and a small **Example** with input and output tables.
 

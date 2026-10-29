@@ -83,14 +83,16 @@ These three live side by side in each feature module and share a name:
 
 ### Files that connect your nodes to the platform
 
-If you get one of these wrong, the build still passes but **the worker starts with no nodes**. These are the most common reasons a new node doesn't appear.
+If you get one of the first three wrong, the build still passes but **the worker starts with no nodes**, and nothing in the build output tells you why. These are the most common reasons a new node doesn't appear.
 
 | File | Why it matters |
 |------|----------------|
-| `AutoConfigure.kt` | A small `@Configuration` + `@ComponentScan` class. It makes Spring scan your package for nodes. Your node classes must live in this package or below. |
-| `META-INF/spring/…AutoConfiguration.imports` | One line naming the `AutoConfigure` class. Spring Boot reads this file to find your module. |
+| `AutoConfigure.kt` | A small `@Configuration` + `@ComponentScan` class. It makes Spring scan your package for nodes. Your node classes must live in this package or below. If `basePackages` doesn't cover your node's package, the node isn't found. |
+| `META-INF/spring/…AutoConfiguration.imports` | One line naming the `AutoConfigure` class. Spring Boot reads this file to find your module. If the file is missing or names the wrong class, Spring doesn't load your module. |
 | `worker/build.gradle.kts` | Its `implementation(project(...))` lines decide which feature modules the worker loads. A module that isn't listed here is never loaded. |
 | `node/` package name | Node classes must be in a package ending in `.node`. The platform derives your **feature ID** by removing that last segment. |
+
+If a node doesn't appear after [Step 5](./step-5-test-and-run.md), follow the [checklist in Troubleshooting](./troubleshooting.md#my-node-doesnt-show-up-in-the-workbench).
 
 ### Files that must agree with each other
 
