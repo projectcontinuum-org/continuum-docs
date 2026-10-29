@@ -13,13 +13,23 @@ title: "Step 3: Make it yours"
 
 The template carries its own name in many files. This step replaces it with yours. It's tedious but mechanical, and you only do it once. Work through the checklist in order and commit when the build is green.
 
-The examples below use these placeholders. Pick your values first:
+**⚠️ Before you start:** Choose these three names and search the other Continuum repositories to confirm they're not already in use:
 
-| Placeholder | Example | Used for |
-|-------------|---------|----------|
-| `<repo>` | `continuum-feature-demo` | Repository, Gradle root project, Helm chart and Docker image name |
-| `<package>` | `org.projectcontinuum.feature.demo` | Kotlin/Java package for your nodes |
-| `<TASK_QUEUE>` | `CONTINUUM_FEATURE_DEMO_TASK_QUEUE` | Temporal task queue. **Must be unique.** |
+| Placeholder | Example | Used for | ⚠️ Warning |
+|-------------|---------|----------|-----------|
+| `<repo>` | `continuum-feature-demo` | Repository, Gradle root project, Helm chart and Docker image name | Can be changed later (cumbersome but possible) |
+| `<package>` | `org.projectcontinuum.feature.demo` | Kotlin/Java package for your nodes | Changing this breaks saved workflows. **Don't change after shipping.** |
+| `<TASK_QUEUE>` | `CONTINUUM_FEATURE_DEMO_TASK_QUEUE` | Temporal task queue. **Must be globally unique across all workers in your Continuum instance.** | If two workers share this queue, Temporal randomly assigns node work to either worker, causing random failures. **Pick this carefully.** |
+
+:::danger[Task Queue Uniqueness is Critical]
+If two different workers have the same `node-task-queue` value:
+- Temporal will assign work to whichever worker polls first
+- A worker without a particular node will receive its work and fail
+- Users see random node failures with no clear cause
+- There is no error message to warn you
+
+**Search all other continuum feature workers in your organization before picking a name.**
+:::
 
 ## Checklist
 
@@ -103,8 +113,25 @@ Then confirm nothing broke:
 
 If you changed the chart, also run `helm lint charts/<repo>`.
 
+### ✅ Verification Checklist for Step 3
+
+Before moving to Step 4, verify these critical synchronization points:
+
+- [ ] **Project name** in `settings.gradle.kts` matches folder names
+- [ ] **Module includes** in `settings.gradle.kts` match actual folders
+- [ ] **Module reference** in `worker/build.gradle.kts` matches the include
+- [ ] **AutoConfigure class name** in `META-INF/spring/…AutoConfiguration.imports` matches the actual class
+- [ ] **Task queue** in `application.yaml` matches Helm `values.yaml` (if updated)
+- [ ] **Feature version** in `gradle.properties` matches chart `appVersion` (if updated)
+- [ ] **No template names remain** (grep check clean)
+- [ ] **Build passes** (`./gradlew build`)
+- [ ] **Helm lint passes** (if you updated the chart: `helm lint charts/<repo>`)
+
 :::info[What you can skip for now]
 You can postpone the Helm chart and the workflow files until you are ready to deploy ([Step 6](./step-6-ship-it.md)). The build, tests and local run only need sections 1 to 4.
+
+**However**, if you skip Helm chart and workflows, still update the task queue value in sections 4, since it affects local testing.
 :::
 
 Next: [write your node](./step-4-write-your-node.md).
+

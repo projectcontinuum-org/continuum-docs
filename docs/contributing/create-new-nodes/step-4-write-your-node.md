@@ -157,12 +157,26 @@ Break one of these and the build fails, the node doesn't load, or workflows brea
 
 | Rule | Why |
 |------|-----|
-| Annotate with `@ContinuumNode`, not `@Component`. | It makes the bean prototype-scoped, so each run gets a fresh instance. The build fails without it. |
+| **Annotate with `@ContinuumNode`, not `@Component`.** | It makes the bean prototype-scoped, so each run gets a fresh instance. The build fails without it. If missing, no error but node won't load. |
 | Extend `ProcessNodeModel` (has inputs) or `TriggerNodeModel` (source node, outputs only). | `TriggerNodeModel.execute()` has no `inputs` parameter. |
-| Set `metadata.id` and `metadata.nodeModel` to `this.javaClass.name`. | The full class name is the node's identity in saved workflows. **Renaming or moving the class later breaks workflows that use it.** |
+| **Set `metadata.id` and `metadata.nodeModel` to `this.javaClass.name`.** | The full class name is the node's identity in saved workflows. **If you rename or move the class later, all saved workflows using this node will break permanently. Don't do this once you've shipped.** |
 | Put the class in a package that ends in `.node`. | The platform removes that last segment to get the feature ID. |
-| Import Jackson from `tools.jackson.*`. | The platform uses Jackson 3. `com.fasterxml.jackson.databind` won't compile. |
+| **Import Jackson from `tools.jackson.*` (Jackson 3).** | The platform uses Jackson 3. Importing from `com.fasterxml.jackson.*` (Jackson 2) won't compile. This is a common mistake. Make sure all Jackson imports use `tools.jackson.*`. |
 | Take `ObjectMapper` as a constructor parameter. | Spring injects it. In unit tests, pass `jacksonObjectMapper()`. |
+
+### Port Configuration
+
+The `inputPorts` and `outputPorts` are Maps where:
+- **Key** (e.g., `"data"`) is the **port ID** you use in `execute()` to read/write data
+- **Value** is a `ContinuumWorkflowModel.NodePort` with:
+  - `name` — human-readable name shown in Workbench (e.g., "Input Table")
+  - `contentType` — MIME type of data flowing through the port
+
+**Standard Content Types**:
+- `APPLICATION_OCTET_STREAM_VALUE` (`"application/octet-stream"`) — Used for table data (most common)
+- Other types can be used for specialized data, but table-based nodes almost always use `application/octet-stream`
+
+All ports in the running example use `APPLICATION_OCTET_STREAM_VALUE`. If you need a different type, refer to the [Node Model & Feature Registration](../../architecture/node-model.md) documentation.
 
 ### Settings and validation
 
@@ -176,7 +190,7 @@ Break one of these and the build fails, the node doesn't load, or workflows brea
 - `createOutputPortWriter("data")` returns a writer. `write(rowNumber, row)` takes a `Long` row number that **starts at 0**.
 - Wrap both in `.use { }`. The output file is only complete once the writer is closed.
 
-Cell values must be one of these types, and never `null`. Anything else makes `write()` throw `IllegalArgumentException: Unsupported type`. Convert other types first (for example `toString()` on a `LocalDate`), and leave a key out instead of storing `null`.
+**Allowed Cell Types** — Only these types can be written. Anything else will throw `IllegalArgumentException: Unsupported type` at runtime. Never use `null`; omit the key instead.
 
 | Kotlin type | Stored as |
 |-------------|-----------|
@@ -187,9 +201,16 @@ Cell values must be one of these types, and never `null`. Anything else makes `w
 | `List<*>`, `Map<*, *>` | `application/json` |
 | SVG `org.w3c.dom.Document` | `image/svg+xml` |
 
+⚠️ **Not allowed**: `null`, `LocalDate`, `BigDecimal`, custom objects. Convert to one of the allowed types first. For example: `LocalDate` → call `.toString()` for a `String`.
+
 ### Errors, retries and progress
 
-Every node runs as a Temporal activity, so an exception thrown from `execute()` is **retried** by default. Throw `NodeRuntimeException(isRetriable = false, ...)` for errors a retry can't fix, such as missing settings or an unconnected port. Empty strings are fine for `workflowId` and `nodeId`.
+Every node runs as a Temporal activity, so an exception thrown from `execute()` is **retried** by default (with exponential backoff). Throw `NodeRuntimeException(isRetriable = false, ...)` for errors a retry can't fix, such as:
+- Missing or invalid settings (user error)
+- An unconnected input port
+- Invalid input data that can't be recovered from
+
+Empty strings are fine for `workflowId` and `nodeId` in the exception.
 
 Call `nodeProgressCallback.report(percent)` (0 to 100) as you go. The Workbench shows it as live progress on the node.
 
@@ -197,13 +218,21 @@ Call `nodeProgressCallback.report(percent)` (0 to 100) as you go. The Workbench 
 
 Rename `HelloWorldNodeModel.doc.md` to `WordCounterNodeModel.doc.md` and rewrite it. The Workbench shows this file next to the node.
 
-The path must match the node's package and class name exactly:
+**The path must match the node's package and class name exactly, or the help will show as "Documentation not found":**
 
+For class `org.projectcontinuum.feature.demo.node.WordCounterNodeModel`:
 ```text
-src/main/resources/org/projectcontinuum/feature/demo/node/WordCounterNodeModel.doc.md
+✓ CORRECT:
+  src/main/resources/org/projectcontinuum/feature/demo/node/WordCounterNodeModel.doc.md
+
+✗ WRONG (no error, but help will be missing):
+  src/main/resources/org/projectcontinuum/feature/demo/WordCounterNodeModel.doc.md
+  src/main/resources/demo/node/WordCounterNodeModel.doc.md
 ```
 
-If the file is missing or misplaced, the node still works, but its help page reads *"Documentation not found for WordCounterNodeModel"*.
+**Path construction rule**: Replace `.` with `/` in your package name, then append `/node/` and your class name + `.doc.md`.
+
+If the file is missing or misplaced, the node still works, but its help page reads *"Documentation not found for WordCounterNodeModel"*. There's no build error to warn you.
 
 A good help page has four parts, as in the template's Hello World page: what the node does, a **Configuration** table, a **Ports** table, and a small **Example** with input and output tables.
 
