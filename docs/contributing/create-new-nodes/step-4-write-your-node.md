@@ -341,7 +341,7 @@ A node can have **several ports**. Add more entries to the map, give each a diff
 
 - `properties` in the metadata holds the **default values** used when a user drops the node on the canvas.
 - Before `execute()` runs, the platform checks the user's settings against `propertiesSchema`. Values that break `required`, `type` or `minimum` fail the node before your code starts. Checking again in `execute()` is still worthwhile because it lets you give a clearer error message.
-- `propertiesUiSchema` is a [JSON Forms](https://jsonforms.io/) layout, used only to draw the form. For credential pickers, see [Credentials](./recipes.md#use-a-credential). You can try schemas in the [JSON Forms playground](https://github.com/projectcontinuum-org/continuum-jsonform-playground) first.
+- `propertiesUiSchema` is a [JSON Forms](https://jsonforms.io/) layout, used only to draw the form. For credential pickers, see [Credentials](./recipes.md#use-a-credential). Design and try the form first in the [JSONForms Playground](https://playground.tools.projectcontinuum.org); see [Design the settings dialog](./design-the-settings-dialog.md).
 
 ### Reading and writing rows
 

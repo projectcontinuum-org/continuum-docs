@@ -25,6 +25,7 @@ Project Continuum is split across several focused repositories under the [`proje
 | [continuum-feature-template](https://github.com/projectcontinuum-org/continuum-feature-template) | Template — scaffold your own custom feature worker. Uses the [Gradle plugin](./gradle-plugin.md) |
 | [continuum-charts](https://github.com/projectcontinuum-org/continuum-charts) | Helm charts for deploying Continuum on Kubernetes |
 | [continuum-local-setup](https://github.com/projectcontinuum-org/continuum-local-setup) | Docker Compose setup for running the entire platform locally |
+| [continuum-jsonform-playground](https://github.com/projectcontinuum-org/continuum-jsonform-playground) | Browser playground for designing node settings dialogs (JSON schema and UI schema), hosted at [playground.tools.projectcontinuum.org](https://playground.tools.projectcontinuum.org). See [Design the settings dialog](../contributing/create-new-nodes/design-the-settings-dialog.md) |
 | [continuum-website](https://github.com/projectcontinuum-org/continuum-website) | Marketing site ([projectcontinuum.org](https://projectcontinuum.org)) |
 | [continuum-docs](https://github.com/projectcontinuum-org/continuum-docs) | This documentation site |
 
