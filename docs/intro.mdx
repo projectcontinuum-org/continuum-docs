@@ -46,12 +46,13 @@ No desktop install — the entire IDE runs in your browser.
 
 ## How it fits together
 
-A workflow is a directed graph of nodes. Each node runs as a Temporal activity dispatched to whichever feature worker registered it — base analytics, cheminformatics, AI/ML, or your own custom worker.
+A workflow is a directed graph of nodes. When you hit Execute, the **orchestration service** interprets that graph as a durable Temporal workflow. It works out which nodes are ready, dispatches each one as a Temporal activity to whichever feature worker registered it (base analytics, cheminformatics, AI/ML, or your own custom worker), and wires each node's outputs into the next node's inputs.
 
 ```mermaid
 flowchart LR
   UI(["🖥️ <b>Workbench</b><br/>draw a workflow<br/>in your browser"]) ==>|"▶ Execute"| API["🌐 <b>API Server</b>"]
-  API ==> T{{"⏱️ <b>Temporal</b><br/>durable orchestration<br/><i>survives crashes</i>"}}
+  API ==> T{{"⏱️ <b>Temporal</b><br/>durable execution<br/><i>survives crashes</i>"}}
+  T <==> O["🧠 <b>Orchestration Service</b><br/>interprets the graph,<br/>schedules nodes"]
   T -->|"dispatch node"| W1["📊 Base Analytics"]
   T -->|"dispatch node"| W2["🧪 Cheminformatics"]
   T -->|"dispatch node"| W3["🤖 AI / ML"]
@@ -63,11 +64,14 @@ flowchart LR
   classDef worker fill:#06b6d433,stroke:#06b6d4,stroke-width:2px
   classDef store fill:#10b98133,stroke:#10b981,stroke-width:2px
   classDef hero fill:#06b6d433,stroke:#06b6d4,stroke-width:4px,stroke-dasharray:6 3
+  classDef orch fill:#ec489955,stroke:#ec4899,stroke-width:4px
   class UI ui
   class API,T core
+  class O orch
   class W1,W2,W3 worker
   class W4 hero
   linkStyle 1 stroke:#ec4899,stroke-width:4px
+  linkStyle 2 stroke:#ec4899,stroke-width:4px
 ```
 
 See [Architecture Overview](./architecture/overview.md) for the full execution path.

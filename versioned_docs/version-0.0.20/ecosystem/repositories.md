@@ -16,7 +16,7 @@ Project Continuum is split across several focused repositories under the [`proje
 
 | Repository | Description |
 |-----------|-------------|
-| [continuum-platform-core](https://github.com/projectcontinuum-org/continuum-platform-core) | Core backend — API server, Temporal orchestration, message bridge, credentials server, cluster manager, cloud gateway, and the [Gradle plugin](./gradle-plugin.md) used to build feature modules and workers |
+| [continuum-platform-core](https://github.com/projectcontinuum-org/continuum-platform-core) | Core backend — API server, orchestration service (interprets workflow graphs as Temporal workflows), message bridge, credentials server, cluster manager, cloud gateway, and the [Gradle plugin](./gradle-plugin.md) used to build feature modules and workers |
 | [continuum-workbench](https://github.com/projectcontinuum-org/continuum-workbench) | Browser IDE — Eclipse Theia + React Flow workflow editor |
 | [continuum-feature-base](https://github.com/projectcontinuum-org/continuum-feature-base) | Base analytics nodes — data transforms, REST, scripting, anomaly detection |
 | [continuum-feature-ai](https://github.com/projectcontinuum-org/continuum-feature-ai) | AI/ML nodes — LLM fine-tuning with Unsloth + LoRA |
