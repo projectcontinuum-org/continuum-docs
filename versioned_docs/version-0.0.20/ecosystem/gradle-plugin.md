@@ -1,5 +1,6 @@
 ---
-sidebar_label: "🔌 Gradle Plugin"
+sidebar_label: "Gradle Plugin"
+sidebar_class_name: sidebar-icon-gradle
 sidebar_position: 2
 title: "Continuum Gradle Plugin"
 ---
