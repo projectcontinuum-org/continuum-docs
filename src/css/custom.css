@@ -444,6 +444,36 @@
   border-left: 1px solid var(--continuum-card-border);
 }
 
+/* Brand-logo icons for sidebar items that have no fitting emoji.
+ * Applied via `sidebar_class_name` in a doc's front matter; the logo is a
+ * mask so it can take any colour. */
+.sidebar-icon-gradle > .menu__link::before,
+.sidebar-icon-helm > .menu__link::before {
+  content: '';
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.3em;
+  background-color: var(--sidebar-icon-color);
+  -webkit-mask: var(--sidebar-icon) center / contain no-repeat;
+  mask: var(--sidebar-icon) center / contain no-repeat;
+}
+
+.sidebar-icon-gradle {
+  --sidebar-icon: url('/img/gradle.svg');
+  --sidebar-icon-color: #209bc4;
+}
+
+.sidebar-icon-helm {
+  --sidebar-icon: url('/img/helm.svg');
+  --sidebar-icon-color: #0f1689;
+}
+
+/* Helm navy is unreadable on the dark background; Helm uses a white logo there. */
+[data-theme='dark'] .sidebar-icon-helm {
+  --sidebar-icon-color: #fff;
+}
+
 /* ================================================================
  * Table of contents
  * ================================================================ */

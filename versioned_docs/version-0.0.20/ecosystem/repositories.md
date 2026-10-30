@@ -16,13 +16,13 @@ Project Continuum is split across several focused repositories under the [`proje
 
 | Repository | Description |
 |-----------|-------------|
-| [continuum-platform-core](https://github.com/projectcontinuum-org/continuum-platform-core) | Core backend — API server, Temporal orchestration, message bridge, credentials server, cluster manager, cloud gateway |
+| [continuum-platform-core](https://github.com/projectcontinuum-org/continuum-platform-core) | Core backend — API server, orchestration service (interprets workflow graphs as Temporal workflows), message bridge, credentials server, cluster manager, cloud gateway, and the [Gradle plugin](./gradle-plugin.md) used to build feature modules and workers |
 | [continuum-workbench](https://github.com/projectcontinuum-org/continuum-workbench) | Browser IDE — Eclipse Theia + React Flow workflow editor |
 | [continuum-feature-base](https://github.com/projectcontinuum-org/continuum-feature-base) | Base analytics nodes — data transforms, REST, scripting, anomaly detection |
 | [continuum-feature-ai](https://github.com/projectcontinuum-org/continuum-feature-ai) | AI/ML nodes — LLM fine-tuning with Unsloth + LoRA |
 | [continuum-feature-cheminformatics](https://github.com/projectcontinuum-org/continuum-feature-cheminformatics) | Cheminformatics nodes — RDKit-powered molecular processing |
 | [continuum-feature-knime](https://github.com/projectcontinuum-org/continuum-feature-knime) | KNIME-compatible workflow executors |
-| [continuum-feature-template](https://github.com/projectcontinuum-org/continuum-feature-template) | Template — scaffold your own custom feature worker |
+| [continuum-feature-template](https://github.com/projectcontinuum-org/continuum-feature-template) | Template — scaffold your own custom feature worker. Uses the [Gradle plugin](./gradle-plugin.md) |
 | [continuum-charts](https://github.com/projectcontinuum-org/continuum-charts) | Helm charts for deploying Continuum on Kubernetes |
 | [continuum-local-setup](https://github.com/projectcontinuum-org/continuum-local-setup) | Docker Compose setup for running the entire platform locally |
 | [continuum-website](https://github.com/projectcontinuum-org/continuum-website) | Marketing site ([projectcontinuum.org](https://projectcontinuum.org)) |

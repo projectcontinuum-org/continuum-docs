@@ -71,6 +71,7 @@ flowchart LR
   subgraph Platform["🌐 Platform services"]
     WB(["🖥️ continuum-workbench"])
     API["continuum-api-server"]
+    ORCH["🧠 continuum-orchestration-service"]
     MB["🔁 continuum-message-bridge"]
   end
   subgraph Infra["🏗️ Infrastructure"]
@@ -91,7 +92,7 @@ flowchart LR
   classDef hero fill:#06b6d433,stroke:#06b6d4,stroke-width:4px,stroke-dasharray:6 3
   class FB,FC worker
   class WB ui
-  class API,MB core
+  class API,ORCH,MB core
   class PG,S3 store
   class T core
   class K,MQ stream
@@ -104,7 +105,7 @@ flowchart LR
 | PostgreSQL | 35432 | Database backing Temporal's workflow state and history |
 | Temporal | 7233 | Durable workflow execution engine — orchestrates node-by-node execution, handles retries and crash recovery |
 | Temporal UI | [localhost:38081](http://localhost:38081) | Inspect running workflows, view execution history, debug |
-| Kafka (3-node KRaft cluster) | 39092–39094 | Carries real-time node execution events from workers to the browser |
+| Kafka (3-node KRaft cluster) | 39092–39094 | Carries real-time execution events from the orchestration service to the browser, and node registrations from workers |
 | Schema Registry | [localhost:38080](http://localhost:38080) | Avro schemas for Kafka messages |
 | Kafka UI | [localhost:38082](http://localhost:38082) | Browse Kafka topics, messages, consumer groups |
 | Mosquitto | 31883 (TCP), 31884 (WS) | MQTT broker — last hop pushing execution events to the browser over WebSockets |
@@ -115,6 +116,7 @@ flowchart LR
 | Service | Port | Purpose |
 |---------|------|---------|
 | continuum-api-server | [localhost:8080](http://localhost:8080) | REST API — workflows, node registry, execution trigger. Single entry point for the workbench UI |
+| continuum-orchestration-service | — | Temporal workflow worker that interprets the workflow graph, dispatches each node to its feature worker, and publishes execution status to Kafka. See [Orchestration Service](../architecture/orchestration-service.md) |
 | continuum-message-bridge | — | Kafka-to-MQTT bridge for live browser updates |
 | continuum-workbench | [localhost:3002](http://localhost:3002) | Browser IDE — Eclipse Theia + React Flow canvas |
 

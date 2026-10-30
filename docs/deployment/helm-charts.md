@@ -1,5 +1,6 @@
 ---
-sidebar_label: "⎈ Helm Charts"
+sidebar_label: "Helm Charts"
+sidebar_class_name: sidebar-icon-helm
 sidebar_position: 1
 ---
 
