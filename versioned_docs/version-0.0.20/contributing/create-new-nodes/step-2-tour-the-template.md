@@ -142,6 +142,6 @@ You don't declare Spring, Temporal, Jackson or test dependencies. The three Cont
 | `org.projectcontinuum.feature-java` | Java feature modules | The same, for Java. |
 | `org.projectcontinuum.worker` | `worker/` | Spring Boot, the worker starter (Temporal polling and node registration), `bootRun`, and Jib for the container image. |
 
-Add a `dependencies { }` block to a feature module only when your node needs an extra library; see [Add a library](./recipes.md#add-a-library). The plugin versions are the `continuumPlatformVersion` in `gradle.properties` (see the [version note in the overview](./overview.md#what-you-need)).
+Add a `dependencies { }` block to a feature module only when your node needs an extra library; see [Add a library](./recipes.md#add-a-library). The plugin versions are the `continuumPlatformVersion` in `gradle.properties` (see the [version note in the overview](./overview.md#what-you-need)). For every setting and the other plugin IDs, see the [Gradle plugin reference](../../ecosystem/gradle-plugin.md).
 
 Next: [rename the template](./step-3-make-it-yours.md).
