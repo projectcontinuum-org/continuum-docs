@@ -69,6 +69,8 @@ You don't need a GitHub token, and you don't need to install Gradle: the reposit
 
 </Steps>
 
+To design a node's settings form without rebuilding anything, use the hosted [JSONForms Playground](https://playground.tools.projectcontinuum.org); see [Design the settings dialog](./design-the-settings-dialog.md).
+
 After the six steps, [More node recipes](./recipes.md) covers adding more nodes, source nodes, credentials, retries, extra libraries, logging and debugging.
 
 ## Where to look when something breaks
